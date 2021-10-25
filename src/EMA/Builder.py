@@ -2,9 +2,7 @@ import numpy as np
 import pandas as pd
 import logging
 
-
 class EmaBuilder(object):
-
     def __init__(self, period):
         self.__a__ = 2 / (period + 1)
         self.Name = f'EMA{period}'
@@ -71,3 +69,6 @@ class EmaBuilder(object):
             else:
                 _return.append(self.getSr(content))
         return pd.concat(_return, axis=1)
+
+def Create(value_sr: pd.Series, period:int, is_last:pd.Series=None ) -> pd.Series:
+    return EmaBuilder(period).getSr(value_sr,is_last)
