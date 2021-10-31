@@ -14,16 +14,18 @@ with open(file_path) as requirements_txt:
         in pkg_resources.parse_requirements(requirements_txt)
     ]
 
+lib = "traiding.indicator"
+
 setuptools.setup(
-    name="traiding.indicator",
+    name=lib,
     version="1.0.0",
     author="InsonusK",
     author_email="insonus.k@gmail.com",
     description="Framework with indicators for trading robots",
     long_description=long_description,
     url="https://github.com/NNTrade/indicators",
-    packages=[f"testpack.{pkg}" for pkg in setuptools.find_packages(where="src")],
-    package_dir={'testpack':'src'},
+    packages=[f"{lib}.{pkg}" for pkg in setuptools.find_packages(where="src")],
+    package_dir={lib:'src'},
     install_requires=install_requires,
     classifiers=[
         "Programming Language :: Python :: 3",
