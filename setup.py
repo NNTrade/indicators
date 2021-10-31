@@ -23,7 +23,7 @@ setuptools.setup(
     long_description=long_description,
     url="https://github.com/NNTrade/indicators",
     packages=setuptools.find_packages(where="src", include=["EMA", "EMA.*"]),
-    package_dir={'':'src'},
+    package_dir={'test':'src'},
     install_requires=install_requires,
     classifiers=[
         "Programming Language :: Python :: 3",
