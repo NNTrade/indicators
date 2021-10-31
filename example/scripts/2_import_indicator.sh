@@ -1,1 +1,0 @@
-python ./2_call_import.py
