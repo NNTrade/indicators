@@ -15,14 +15,15 @@ with open(file_path) as requirements_txt:
     ]
 
 setuptools.setup(
-    name="indicators-for-trading",
+    name="traiding.indicator",
     version="1.0.0",
     author="InsonusK",
     author_email="insonus.k@gmail.com",
     description="Framework with indicators for trading robots",
     long_description=long_description,
     url="https://github.com/NNTrade/indicators",
-    packages=setuptools.find_packages(where="./src"),
+    packages=setuptools.find_packages(where="src", include=["EMA", "EMA.*"]),
+    package_dir={"traiding.indicator":'src'},
     install_requires=install_requires,
     classifiers=[
         "Programming Language :: Python :: 3",

@@ -1,0 +1,1 @@
+pip install git+ssh://git@github.com/NNTrade/indicators.git
