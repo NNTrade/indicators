@@ -22,7 +22,7 @@ setuptools.setup(
     description="Framework with indicators for trading robots",
     long_description=long_description,
     url="https://github.com/NNTrade/indicators",
-    packages=setuptools.find_packages(where="src"),
+    packages=setuptools.find_namespace_packages(where="src"),
     package_dir={'testpack':'src'},
     install_requires=install_requires,
     classifiers=[
