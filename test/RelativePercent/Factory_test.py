@@ -4,7 +4,7 @@ import logging
 from .testEnum import TimeFrame
 from src.RelativePercent.Factory import PercentFactory
 
-class PercentFactroyTestCase(unittest.TestCase):
+class PercentFactoryTestCase(unittest.TestCase):
     logger = logging.getLogger(__name__)
     logging.basicConfig(format = '%(asctime)s %(module)s %(levelname)s: %(message)s',
                     datefmt = '%m/%d/%Y %I:%M:%S %p', level = logging.DEBUG)
