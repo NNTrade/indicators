@@ -3,9 +3,10 @@ import pandas as pd
 import logging
 from src.ElliotWaves.direction import direction
 from src.ElliotWaves.point import point
-from src.ElliotWaves.rules.rules import EW2_gt_SW1, EW3_gt_EW1, EW5_gt_EW3, HW3_gt_HW1_or_HW3_gt_HW5
+from src.ElliotWaves.rules.rules import EW2_gt_SW1, EW3_gt_EW1, EW5_gt_EW3, EWx_SWx_is_ext_RWx, HW3_gt_HW1_or_HW3_gt_HW5, HWx_gt_HWy_and_HWx_gt_HWz, TWx_not_TWy_not_TWz, W2_dif_W4
 
 from src.ElliotWaves.wave import wave
+from src.ElliotWaves.type import type
 
 
 class EW2_gt_SW1_TestCase(unittest.TestCase):
@@ -179,3 +180,236 @@ class EW5_gt_EW3_TestCase(unittest.TestCase):
         wave5 = wave(point(self.dt_sw5, 3),point(self.dt_ew5, 2.8))
 
         self.assertFalse(EW5_gt_EW3(wave3,wave5, direction.Short))
+
+class W2_dif_W4_TestCase(unittest.TestCase):
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(format = '%(asctime)s %(module)s %(levelname)s: %(message)s',
+                    datefmt = '%m/%d/%Y %I:%M:%S %p', level = logging.DEBUG)
+
+    dt_sw2 = pd.Timestamp.today() + pd.Timedelta(days = 2)
+    dt_ew2 = pd.Timestamp.today() + pd.Timedelta(days = 3) 
+    dt_sw4 = pd.Timestamp.today() + pd.Timedelta(days = 4)
+    dt_ew4 = pd.Timestamp.today() + pd.Timedelta(days = 5)
+
+
+    def test_W2_dif_height_W4__succes(self):
+        wave2 = wave(point(self.dt_sw2, 4),point(self.dt_ew2, 2))
+        wave4 = wave(point(self.dt_sw4, 5),point(self.dt_ew4, 4))
+
+        self.assertTrue(W2_dif_W4(wave2,wave4))
+    def test_W2_dif_time_W4__succes(self):
+        wave2 = wave(point(self.dt_sw2, 4),point(self.dt_ew2, 2))
+        wave4 = wave(point(self.dt_sw4, 5),point(self.dt_ew4 + pd.Timedelta(days = 1), 3))
+
+        self.assertTrue(W2_dif_W4(wave2,wave4))
+    def test_W2_dif_type_W4__succes(self):
+        wave2 = wave(point(self.dt_sw2, 4),point(self.dt_ew2, 2))
+        wave4 = wave(point(self.dt_sw4, 5),point(self.dt_ew4, 3),type.not_implemented_for_test)
+
+        self.assertTrue(W2_dif_W4(wave2,wave4))
+    
+    
+    def test_W2_dif_height_time_W4__succes(self):
+        wave2 = wave(point(self.dt_sw2, 4),point(self.dt_ew2 + pd.Timedelta(days = 1), 2))
+        wave4 = wave(point(self.dt_sw4, 5),point(self.dt_ew4, 4))
+
+        self.assertTrue(W2_dif_W4(wave2,wave4))
+    def test_W2_dif_time_type_W4__succes(self):
+        wave2 = wave(point(self.dt_sw2, 4),point(self.dt_ew2, 2),type.not_implemented_for_test)
+        wave4 = wave(point(self.dt_sw4 + pd.Timedelta(days = 1), 5),point(self.dt_ew4, 3))
+
+        self.assertTrue(W2_dif_W4(wave2,wave4))
+    def test_W2_dif_height_type_W4__succes(self):
+        wave2 = wave(point(self.dt_sw2, 4),point(self.dt_ew2, 1))
+        wave4 = wave(point(self.dt_sw4, 5),point(self.dt_ew4, 3),type.not_implemented_for_test)
+
+        self.assertTrue(W2_dif_W4(wave2,wave4))
+    
+    
+    def test_W2_dif_height_time_type_W4__succes(self):
+        wave2 = wave(point(self.dt_sw2, 4),point(self.dt_ew2 + pd.Timedelta(seconds = 1), 2))
+        wave4 = wave(point(self.dt_sw4, 6),point(self.dt_ew4, 3),type.not_implemented_for_test)
+
+        self.assertTrue(W2_dif_W4(wave2,wave4))
+
+
+    def test_W2_no_dif_W4__fail(self):
+        wave2 = wave(point(self.dt_sw2, 4),point(self.dt_ew2, 2))
+        wave4 = wave(point(self.dt_sw4, 5),point(self.dt_ew4, 3))
+
+        self.assertFalse(W2_dif_W4(wave2,wave4))
+
+class HWx_gt_HWy_and_HWx_gt_HWz_TestCase(unittest.TestCase):
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(format = '%(asctime)s %(module)s %(levelname)s: %(message)s',
+                    datefmt = '%m/%d/%Y %I:%M:%S %p', level = logging.DEBUG)
+
+
+    dt_sw1 = pd.Timestamp.today()
+    dt_ew1 = pd.Timestamp.today() + pd.Timedelta(days = 1)
+    dt_sw3 = pd.Timestamp.today() + pd.Timedelta(days = 2)
+    dt_ew3 = pd.Timestamp.today() + pd.Timedelta(days = 3) 
+    dt_sw5 = pd.Timestamp.today() + pd.Timedelta(days = 4)
+    dt_ew5 = pd.Timestamp.today() + pd.Timedelta(days = 5)
+
+    def test_HW5_gt_than_other__success(self):
+        wave1 = wave(point(self.dt_sw1, 1),point(self.dt_ew1, 3)) 
+        wave3 = wave(point(self.dt_sw3, 2),point(self.dt_ew3, 4)) 
+        wave5 = wave(point(self.dt_sw3, 5),point(self.dt_ew3, 8.1))
+
+        self.assertTrue(HWx_gt_HWy_and_HWx_gt_HWz(wave1,wave3,wave5,0.5))
+    
+    def test_HW5_not_gt_than_other__success(self):
+        wave1 = wave(point(self.dt_sw1, 1),point(self.dt_ew1, 3)) 
+        wave3 = wave(point(self.dt_sw3, 2),point(self.dt_ew3, 4)) 
+        wave5 = wave(point(self.dt_sw3, 5),point(self.dt_ew3, 7.9)) 
+
+        self.assertFalse(HWx_gt_HWy_and_HWx_gt_HWz(wave1,wave3,wave5,0.5))
+
+    def test_HW3_gt_than_other__success(self):
+        wave1 = wave(point(self.dt_sw1, 1),point(self.dt_ew1, 3)) 
+        wave3 = wave(point(self.dt_sw3, 2),point(self.dt_ew3, 5.1)) 
+        wave5 = wave(point(self.dt_sw3, 5),point(self.dt_ew3, 7)) 
+
+        self.assertTrue(HWx_gt_HWy_and_HWx_gt_HWz(wave1,wave3,wave5,0.5))
+    
+    def test_HW5_not_gt_than_other__success(self):
+        wave1 = wave(point(self.dt_sw1, 1),point(self.dt_ew1, 3)) 
+        wave3 = wave(point(self.dt_sw3, 2),point(self.dt_ew3, 4.9)) 
+        wave5 = wave(point(self.dt_sw3, 5),point(self.dt_ew3, 7)) 
+
+        self.assertFalse(HWx_gt_HWy_and_HWx_gt_HWz(wave1,wave3,wave5,0.5))
+
+
+    def test_HW1_and_HW5_gt_than_HW1__fail(self):
+        wave1 = wave(point(self.dt_sw1, 1),point(self.dt_ew1, 3)) 
+        wave3 = wave(point(self.dt_sw3, 2),point(self.dt_ew3, 5.1)) 
+        wave5 = wave(point(self.dt_sw3, 5),point(self.dt_ew3, 8.1)) 
+
+        self.assertFalse(HWx_gt_HWy_and_HWx_gt_HWz(wave1,wave3,wave5,0.5))
+
+    def test_all_equeal__fail(self):
+        wave1 = wave(point(self.dt_sw1, 1),point(self.dt_ew1, 3)) 
+        wave3 = wave(point(self.dt_sw3, 2),point(self.dt_ew3, 4)) 
+        wave5 = wave(point(self.dt_sw3, 5),point(self.dt_ew3, 7))
+
+        self.assertFalse(HWx_gt_HWy_and_HWx_gt_HWz(wave1,wave3,wave5,0.01))
+
+class TWx_not_TWy_not_TWz_TestCase(unittest.TestCase):
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(format = '%(asctime)s %(module)s %(levelname)s: %(message)s',
+                    datefmt = '%m/%d/%Y %I:%M:%S %p', level = logging.DEBUG)
+
+    def test_TW3_gt_than_TW1__success(self):
+        dt_sw1 = pd.Timestamp.today()
+        dt_ew1 = pd.Timestamp.today() + pd.Timedelta(days = 1)
+        dt_sw2 = pd.Timestamp.today() + pd.Timedelta(days = 1)
+        dt_ew2 = pd.Timestamp.today() + pd.Timedelta(days = 2) 
+        dt_sw3 = pd.Timestamp.today() + pd.Timedelta(days = 2)
+        dt_ew3 = pd.Timestamp.today() + pd.Timedelta(days = 4, seconds=1)
+
+        wave1 = wave(point(dt_sw1, 1),point(dt_ew1, 3)) 
+        wave2 = wave(point(dt_sw2, 2),point(dt_ew2, 4)) 
+        wave3 = wave(point(dt_sw3, 5),point(dt_ew3, 7))
+
+        self.assertTrue(TWx_not_TWy_not_TWz([wave1,wave2, wave3], dif_percent=1))
+    
+    def test_TW3_not_gt_than_TW1__fail(self):
+        dt_sw1 = pd.Timestamp.today()
+        dt_ew1 = pd.Timestamp.today() + pd.Timedelta(days = 1)
+        dt_sw2 = pd.Timestamp.today() + pd.Timedelta(days = 1)
+        dt_ew2 = pd.Timestamp.today() + pd.Timedelta(days = 2) 
+        dt_sw3 = pd.Timestamp.today() + pd.Timedelta(days = 2)
+        dt_ew3 = pd.Timestamp.today() + pd.Timedelta(days = 4)
+
+        wave1 = wave(point(dt_sw1, 1),point(dt_ew1, 3)) 
+        wave2 = wave(point(dt_sw2, 2),point(dt_ew2, 4)) 
+        wave3 = wave(point(dt_sw3, 5),point(dt_ew3, 7))
+
+        self.assertFalse(TWx_not_TWy_not_TWz([wave1,wave2, wave3], dif_percent=1.01))
+
+    def test_array_too_small__exception(self):
+        dt_sw1 = pd.Timestamp.today()
+        dt_ew1 = pd.Timestamp.today() + pd.Timedelta(days = 1)
+        dt_sw2 = pd.Timestamp.today() + pd.Timedelta(days = 1)
+        dt_ew2 = pd.Timestamp.today() + pd.Timedelta(days = 10) 
+
+        wave1 = wave(point(dt_sw1, 1),point(dt_ew1, 3)) 
+        wave2 = wave(point(dt_sw2, 2),point(dt_ew2, 4)) 
+        
+        with self.assertRaises(Exception):
+            TWx_not_TWy_not_TWz([wave1,wave2], dif_percent=1)
+
+    def test_array_too_big__exception(self):
+        dt_sw1 = pd.Timestamp.today()
+        dt_ew1 = pd.Timestamp.today() + pd.Timedelta(days = 1)
+        dt_sw2 = pd.Timestamp.today() + pd.Timedelta(days = 1)
+        dt_ew2 = pd.Timestamp.today() + pd.Timedelta(days = 10) 
+        dt_sw3 = pd.Timestamp.today() + pd.Timedelta(days = 2)
+        dt_ew3 = pd.Timestamp.today() + pd.Timedelta(days = 4)
+        dt_sw4 = pd.Timestamp.today() + pd.Timedelta(days = 2)
+        dt_ew4 = pd.Timestamp.today() + pd.Timedelta(days = 4)
+
+        wave1 = wave(point(dt_sw1, 1),point(dt_ew1, 3)) 
+        wave2 = wave(point(dt_sw2, 2),point(dt_ew2, 4)) 
+        wave3 = wave(point(dt_sw3, 2),point(dt_ew3, 4)) 
+        wave4 = wave(point(dt_sw4, 2),point(dt_ew4, 4)) 
+        
+        with self.assertRaises(Exception):
+            TWx_not_TWy_not_TWz([wave1,wave2,wave3,wave4], dif_percent=1)
+
+class Wx_SWx_is_ext_RWx_TestCase(unittest.TestCase):
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(format = '%(asctime)s %(module)s %(levelname)s: %(message)s',
+                    datefmt = '%m/%d/%Y %I:%M:%S %p', level = logging.DEBUG)
+    
+    dt_sw1 = pd.Timestamp.today()
+    dt_ew1 = pd.Timestamp.today() + pd.Timedelta(days = 1)
+
+    def test_is_ext__success(self):
+        wave1 = wave(point(self.dt_sw1, 1),point(self.dt_ew1, 10)) 
+        df = pd.DataFrame(data={"H":[3,5,7,10], "L":[1,3,5,7]})
+
+        self.assertTrue(EWx_SWx_is_ext_RWx(wave1, df, direction.Long))
+    
+    def test_is_ext_for_short_dir__success(self):
+        wave1 = wave(point(self.dt_sw1, 10),point(self.dt_ew1, 1)) 
+        df = pd.DataFrame(data={"H":[10,7,5,3], "L":[7,5,3,1]})
+
+        self.assertTrue(EWx_SWx_is_ext_RWx(wave1, df, direction.Short))
+    
+    def test_is_not_ext_by_High__fail(self):
+        wave1 = wave(point(self.dt_sw1, 1),point(self.dt_ew1, 10)) 
+        df = pd.DataFrame(data={"H":[3,15,7,10], "L":[1,3,5,7]})
+
+        self.assertFalse(EWx_SWx_is_ext_RWx(wave1, df, direction.Long))
+    
+    def test_is_not_ext_by_Low__fail(self):
+        wave1 = wave(point(self.dt_sw1, 1),point(self.dt_ew1, 10)) 
+        df = pd.DataFrame(data={"H":[3,5,7,10], "L":[1,3,0.4,7]})
+
+        self.assertFalse(EWx_SWx_is_ext_RWx(wave1, df, direction.Long))
+
+    def test_for_long_end_checked_by_H__success(self):
+        wave1 = wave(point(self.dt_sw1, 1),point(self.dt_ew1, 10)) 
+        df = pd.DataFrame(data={"H":[3,5,7,10], "L":[1,3,100,7]})
+
+        self.assertTrue(EWx_SWx_is_ext_RWx(wave1, df, direction.Long))
+    
+    def test_for_long_start_checked_by_L__success(self):
+        wave1 = wave(point(self.dt_sw1, 1),point(self.dt_ew1, 10)) 
+        df = pd.DataFrame(data={"H":[3,5,0.7,10], "L":[1,3,5,7]})
+
+        self.assertTrue(EWx_SWx_is_ext_RWx(wave1, df, direction.Long))
+    
+    def test_for_stort_end_checked_by_L__success(self):
+        wave1 = wave(point(self.dt_sw1, 10),point(self.dt_ew1, 1)) 
+        df = pd.DataFrame(data={"H":[10,7,0.5,3], "L":[7,5,3,1]})
+
+        self.assertTrue(EWx_SWx_is_ext_RWx(wave1, df, direction.Short))
+    
+    def test_for_stort_start_checked_by_H__success(self):
+        wave1 = wave(point(self.dt_sw1, 10),point(self.dt_ew1, 1)) 
+        df = pd.DataFrame(data={"H":[10,7,5,3], "L":[7,5,13,1]})
+
+        self.assertTrue(EWx_SWx_is_ext_RWx(wave1, df, direction.Short))
