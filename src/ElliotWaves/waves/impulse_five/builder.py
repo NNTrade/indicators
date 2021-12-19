@@ -35,6 +35,12 @@ class impulse_five:
         else:
             raise Exception("Wave adding check FAIL: \n" +
                             "\n".join([("- " + err) for err in error_list]))
+    
+    def try_add_wave1(self, wave1:wave)->Tuple[bool,List[str]]:
+        return_status, error_list = self.__check_wave1(wave1)
+        if return_status:
+            self.__wave1 = wave1
+        return return_status, error_list
 
     def __check_wave2(self,wave2:wave)->Tuple[bool, List[str]]:
         error_list = []
@@ -57,6 +63,12 @@ class impulse_five:
         else:
             raise Exception("Wave adding check FAIL: \n" +
                             "\n".join([("- " + err) for err in error_list]))
+
+    def try_add_wave2(self, wave2:wave)->Tuple[bool,List[str]]:
+        return_status, error_list = self.__check_wave2(wave2)
+        if return_status:
+            self.__wave2 = wave2
+        return return_status, error_list
 
     def __check_wave3(self,wave3:wave)->Tuple[bool, List[str]]:
         error_list = []
@@ -82,6 +94,12 @@ class impulse_five:
         else:
             raise Exception("Wave adding check FAIL: \n" +
                             "\n".join([("- " + err) for err in error_list]))
+
+    def try_add_wave3(self, wave3:wave)->Tuple[bool,List[str]]:
+        return_status, error_list = self.__check_wave3(wave3)
+        if return_status:
+            self.__wave3 = wave3
+        return return_status, error_list
 
     def __check_wave4(self,wave4:wave)->Tuple[bool, List[str]]:
         error_list = []
@@ -110,6 +128,12 @@ class impulse_five:
         else:
             raise Exception("Wave adding check FAIL: \n" +
                             "\n".join([("- " + err) for err in error_list]))
+
+    def try_add_wave4(self, wave4:wave)->Tuple[bool,List[str]]:
+        return_status, error_list = self.__check_wave4(wave4)
+        if return_status:
+            self.__wave4 = wave4
+        return return_status, error_list
 
     def __check_wave5(self,wave5:wave)->Tuple[bool, List[str]]:
         error_list = []
@@ -142,6 +166,11 @@ class impulse_five:
             raise Exception("Wave adding check FAIL: \n" +
                             "\n".join([("- " + err) for err in error_list]))
 
+    def try_add_wave5(self, wave5:wave)->Tuple[bool,List[str]]:
+        return_status, error_list = self.__check_wave5(wave5)
+        if return_status:
+            self.__wave5 = wave5
+        return return_status, error_list
 
 
     
