@@ -1,4 +1,5 @@
 import pandas as pd
+
 class point:
     def __init__(self, timestamp: pd.Timestamp, price:float) -> None:
         self.__timestamp = timestamp

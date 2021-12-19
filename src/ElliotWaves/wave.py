@@ -6,7 +6,7 @@ class wave:
     def __init__(self, start: point, end: point) -> None:
         self.__start = start
         self.__end = end
-        self.__height = abs(self.end - self.start)
+        self.__height = abs(self.end.price - self.start.price)
         self.__time = self.end.timestamp - self.start.timestamp
         pass
     
