@@ -3,7 +3,7 @@ import pandas as pd
 import logging
 from src.ElliotWaves.direction import direction
 from src.ElliotWaves.point import point
-from src.ElliotWaves.rules.rules import EW2_gt_SW1, EW3_gt_EW1, EW5_gt_EW3, EWx_SWx_is_ext_RWx, HW3_gt_HW1_or_HW3_gt_HW5, HWx_gt_HWy_and_HWx_gt_HWz, TWx_not_TWy_not_TWz, W2_dif_W4
+from src.ElliotWaves.rules.rules import EW2_gt_SW1, EW3_gt_EW1, EW5_gt_EW3, EWx_SWx_is_ext_RWx, HW3_gt_HW1_or_HW3_gt_HW5, HWx_gt_HWy_and_HWx_gt_HWz, TWx_not_TWy_not_TWz, W2_dif_W4, EW4_gt_EW1
 
 from src.ElliotWaves.wave import wave
 from src.ElliotWaves.type import type
@@ -138,6 +138,48 @@ class HW3_gt_HW1_or_HW3_gt_HW5_TestCase(unittest.TestCase):
         wave5 = wave(point(self.dt_sw3, 2.2),point(self.dt_ew3, 3.3))
 
         self.assertFalse(HW3_gt_HW1_or_HW3_gt_HW5(wave1,wave3,wave5))
+
+class EW4_gt_EW1_TestCase(unittest.TestCase):
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(format = '%(asctime)s %(module)s %(levelname)s: %(message)s',
+                    datefmt = '%m/%d/%Y %I:%M:%S %p', level = logging.DEBUG)
+
+    dt_sw1 = pd.Timestamp.today() + pd.Timedelta(days = 2)
+    dt_ew1 = pd.Timestamp.today() + pd.Timedelta(days = 3) 
+    dt_sw4 = pd.Timestamp.today() + pd.Timedelta(days = 4)
+    dt_ew4 = pd.Timestamp.today() + pd.Timedelta(days = 5)
+
+    def test_EW4_gt_EW1__success(self):
+        wave1 = wave(point(self.dt_sw1, 2),point(self.dt_ew1, 4))
+        wave4 = wave(point(self.dt_sw4, 3),point(self.dt_ew4, 5))
+
+        self.assertTrue(EW4_gt_EW1(wave1,wave4, direction.Long))
+    def test_EW4_eq_EW1__fail(self):
+        wave1 = wave(point(self.dt_sw1, 2),point(self.dt_ew1, 4))
+        wave4 = wave(point(self.dt_sw4, 3),point(self.dt_ew4, 4))
+
+        self.assertFalse(EW4_gt_EW1(wave1,wave4, direction.Long))
+    def test_EW4_ls_EW1__fail(self):
+        wave1 = wave(point(self.dt_sw1, 2),point(self.dt_ew1, 4))
+        wave4 = wave(point(self.dt_sw4, 3),point(self.dt_ew4, 3.8))
+
+        self.assertFalse(EW4_gt_EW1(wave1,wave4, direction.Long))  
+
+    def test_short_dir_EW4_ls_EW1__success(self):
+        wave1 = wave(point(self.dt_sw1, 4),point(self.dt_ew1, 2))
+        wave4 = wave(point(self.dt_sw4, 3),point(self.dt_ew4, 1))
+
+        self.assertTrue(EW4_gt_EW1(wave1,wave4, direction.Short))
+    def test_short_dir_EW4_eq_EW1__fail(self):
+        wave1 = wave(point(self.dt_sw1, 4),point(self.dt_ew1, 2))
+        wave4 = wave(point(self.dt_sw4, 3),point(self.dt_ew4, 2))
+
+        self.assertFalse(EW4_gt_EW1(wave1,wave4, direction.Short))
+    def test_short_dir_EW4_gt_EW1__fail(self):
+        wave1 = wave(point(self.dt_sw1, 4),point(self.dt_ew1, 2))
+        wave4 = wave(point(self.dt_sw4, 3),point(self.dt_ew4, 2.8))
+
+        self.assertFalse(EW4_gt_EW1(wave1,wave4, direction.Short))
 
 class EW5_gt_EW3_TestCase(unittest.TestCase):
     logger = logging.getLogger(__name__)
@@ -358,7 +400,7 @@ class TWx_not_TWy_not_TWz_TestCase(unittest.TestCase):
         with self.assertRaises(Exception):
             TWx_not_TWy_not_TWz([wave1,wave2,wave3,wave4], dif_percent=1)
 
-class Wx_SWx_is_ext_RWx_TestCase(unittest.TestCase):
+class EWx_SWx_is_ext_RWx_TestCase(unittest.TestCase):
     logger = logging.getLogger(__name__)
     logging.basicConfig(format = '%(asctime)s %(module)s %(levelname)s: %(message)s',
                     datefmt = '%m/%d/%Y %I:%M:%S %p', level = logging.DEBUG)
@@ -370,46 +412,46 @@ class Wx_SWx_is_ext_RWx_TestCase(unittest.TestCase):
         wave1 = wave(point(self.dt_sw1, 1),point(self.dt_ew1, 10)) 
         df = pd.DataFrame(data={"H":[3,5,7,10], "L":[1,3,5,7]})
 
-        self.assertTrue(EWx_SWx_is_ext_RWx(wave1, df, direction.Long))
+        self.assertTrue(EWx_SWx_is_ext_RWx(wave1, df))
     
     def test_is_ext_for_short_dir__success(self):
         wave1 = wave(point(self.dt_sw1, 10),point(self.dt_ew1, 1)) 
         df = pd.DataFrame(data={"H":[10,7,5,3], "L":[7,5,3,1]})
 
-        self.assertTrue(EWx_SWx_is_ext_RWx(wave1, df, direction.Short))
+        self.assertTrue(EWx_SWx_is_ext_RWx(wave1, df))
     
     def test_is_not_ext_by_High__fail(self):
         wave1 = wave(point(self.dt_sw1, 1),point(self.dt_ew1, 10)) 
         df = pd.DataFrame(data={"H":[3,15,7,10], "L":[1,3,5,7]})
 
-        self.assertFalse(EWx_SWx_is_ext_RWx(wave1, df, direction.Long))
+        self.assertFalse(EWx_SWx_is_ext_RWx(wave1, df))
     
     def test_is_not_ext_by_Low__fail(self):
         wave1 = wave(point(self.dt_sw1, 1),point(self.dt_ew1, 10)) 
         df = pd.DataFrame(data={"H":[3,5,7,10], "L":[1,3,0.4,7]})
 
-        self.assertFalse(EWx_SWx_is_ext_RWx(wave1, df, direction.Long))
+        self.assertFalse(EWx_SWx_is_ext_RWx(wave1, df))
 
     def test_for_long_end_checked_by_H__success(self):
         wave1 = wave(point(self.dt_sw1, 1),point(self.dt_ew1, 10)) 
         df = pd.DataFrame(data={"H":[3,5,7,10], "L":[1,3,100,7]})
 
-        self.assertTrue(EWx_SWx_is_ext_RWx(wave1, df, direction.Long))
+        self.assertTrue(EWx_SWx_is_ext_RWx(wave1, df))
     
     def test_for_long_start_checked_by_L__success(self):
         wave1 = wave(point(self.dt_sw1, 1),point(self.dt_ew1, 10)) 
         df = pd.DataFrame(data={"H":[3,5,0.7,10], "L":[1,3,5,7]})
 
-        self.assertTrue(EWx_SWx_is_ext_RWx(wave1, df, direction.Long))
+        self.assertTrue(EWx_SWx_is_ext_RWx(wave1, df))
     
     def test_for_stort_end_checked_by_L__success(self):
         wave1 = wave(point(self.dt_sw1, 10),point(self.dt_ew1, 1)) 
         df = pd.DataFrame(data={"H":[10,7,0.5,3], "L":[7,5,3,1]})
 
-        self.assertTrue(EWx_SWx_is_ext_RWx(wave1, df, direction.Short))
+        self.assertTrue(EWx_SWx_is_ext_RWx(wave1, df))
     
     def test_for_stort_start_checked_by_H__success(self):
         wave1 = wave(point(self.dt_sw1, 10),point(self.dt_ew1, 1)) 
         df = pd.DataFrame(data={"H":[10,7,5,3], "L":[7,5,13,1]})
 
-        self.assertTrue(EWx_SWx_is_ext_RWx(wave1, df, direction.Short))
+        self.assertTrue(EWx_SWx_is_ext_RWx(wave1, df))

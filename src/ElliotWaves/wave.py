@@ -1,3 +1,5 @@
+from numpy import NaN
+from src.ElliotWaves.direction import direction
 from .point import point
 from .type import type
 import pandas as pd
@@ -10,6 +12,12 @@ class wave:
         self.__time:pd.Timedelta = self.end.timestamp - self.start.timestamp
         self.__time_in_sec:int = self.__time.days*24*60*60 + self.__time.seconds
         self.__type:type = type
+        if self.__end.price > self.__start.price:
+            self.__direction = direction.Long
+        elif self.__end.price < self.__start.price:
+            self.__direction = direction.Short
+        else:
+            self.__direction = NaN
         pass
     
     @property
@@ -35,3 +43,7 @@ class wave:
     @property
     def time_is_sec(self) -> int:
         return self.__time_in_sec
+
+    @property
+    def direction(self) -> direction:
+        return self.__direction
