@@ -1,12 +1,15 @@
 import unittest
 import pandas as pd
 import logging
-from src.ElliotWaves.direction import direction
-from src.ElliotWaves.point import point
-from src.ElliotWaves.rules.rules import EW2_gt_SW1, EW3_gt_EW1, EW5_gt_EW3, EWx_SWx_is_ext_RWx, HW3_gt_HW1_or_HW3_gt_HW5, HWx_gt_HWy_and_HWx_gt_HWz, TWx_not_TWy_not_TWz, W2_dif_W4, EW4_gt_EW1
+from src.ElliotWaves.misc.direction import direction
+from src.ElliotWaves.misc.point import point
+from src.ElliotWaves.rules.rules import EW2_gt_SW1, EW3_gt_EW1, EW5_gt_EW3, \
+                                        EWx_SWx_is_ext_RWx, HW3_gt_HW1_or_HW3_gt_HW5, \
+                                        HWx_gt_HWy_and_HWx_gt_HWz, TWx_not_TWy_not_TWz, \
+                                        W2_dif_W4, EW4_gt_EW1
 
-from src.ElliotWaves.wave import wave
-from src.ElliotWaves.type import type
+from src.ElliotWaves.misc.wave import wave
+from src.ElliotWaves.misc.type import type
 
 
 class EW2_gt_SW1_TestCase(unittest.TestCase):

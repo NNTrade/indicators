@@ -1,96 +1,154 @@
 from __future__ import annotations
-from typing import List
-from numpy import NaN, isnan
+import logging
+from typing import List, Tuple
+from numpy import NAN, NaN, isnan
 import pandas as pd
-from ...direction import direction
-from ...wave import wave
+from pandas.core.frame import DataFrame
+from ...misc.direction import direction
+from ...misc.wave import wave
 from .builder import builder_impulse_five
-from .builder_correction_wave import try_build_wave as try_cor_build_wave
-from .builder_impulse_wave import try_build_wave as try_imp_build_wave
+from ...misc.candle_name import *
+from .build_wave import try_build_wave
+
+def search(df: pd.DataFrame, impulse_direction: direction = None) -> List[builder_impulse_five]:
+    _ret = []
+    if impulse_direction == direction.Long or impulse_direction is None:
+        _list,_ = __search(df, builder_impulse_five(direction.Long, True))
+        _ret = _ret + _list
+    if impulse_direction == direction.Short or impulse_direction is None:
+        _list,_ = __search(df, builder_impulse_five(direction.Short, True))
+        _ret = _ret + _list
+    return _ret
+
+def __search(df: pd.DataFrame, builder_imp_five: builder_impulse_five, try_search=False) -> Tuple[List[builder_impulse_five], List[builder_impulse_five]]:
+    search_wv = search_wave(builder_imp_five.next_wave_direction())
+    wave_list = search_wv.search(df)
+
+    _ret = []
+    _dead_ret =[]
+
+    for wave in wave_list:
+        res, builder = builder_imp_five.try_add(wave)
+        if res:
+            if builder.isComplete:
+                _ret.append(builder)
+            else:
+                _list, _dead_list = __search(
+                    df[df.index >= wave.end.timestamp], builder)
+                if len(_list) > 0:
+                    _ret = _ret + _list
+                elif try_search:
+                    _dead_ret.append(builder)
+                
+                if len(_dead_list) > 0:
+                    _dead_ret = _dead_ret + _dead_list
+        
+    return _ret, _dead_ret
+
+def try_search(df: pd.DataFrame, impulse_direction: direction = None) -> Tuple[List[builder_impulse_five], List[builder_impulse_five]]:
+    _ret = []
+    _dead_ret = []
+    if impulse_direction == direction.Long or impulse_direction is None:
+        _list,_dead_list = __search(df, builder_impulse_five(direction.Long, True),try_search=True)
+        _ret = _ret + _list
+        _dead_ret = _dead_ret + _dead_list
+    if impulse_direction == direction.Short or impulse_direction is None:
+        _list,_dead_list = __search(df, builder_impulse_five(direction.Short, True),try_search=True)
+        _ret = _ret + _list
+        _dead_ret = _dead_ret + _dead_list
+    return _ret
 
 class DataFrameFilter:
-    def __init__(self,impulse_direction:direction) -> None:
-        if impulse_direction == direction.Long:
-            self.high_label = "H"
-            self.low_label = "L"
-            self.__right_border_search = self.__right_border__Long 
-        elif impulse_direction == direction.Short:
-            self.high_label = "L"
-            self.low_label = "H"
-            self.__right_border_search = self.__right_border__Short 
+    def __init__(self, wave_direction: direction) -> None:
+        if wave_direction == direction.Long:
+            self.high_label = High
+            self.low_label = Low
+            self.__right_border_search = self.__right_border__Long
+        elif wave_direction == direction.Short:
+            self.high_label = Low
+            self.low_label = High
+            self.__right_border_search = self.__right_border__Short
         else:
-            raise Exception(f"unknown direction {impulse_direction}")
+            raise Exception(f"unknown direction {wave_direction}")
         pass
-    
+
     @staticmethod
-    def getLongFilter()->DataFrameFilter:
+    def getLongFilter() -> DataFrameFilter:
         return DataFrameFilter(direction.Long)
 
     @staticmethod
-    def getShortFilter()->DataFrameFilter:
+    def getShortFilter() -> DataFrameFilter:
         return DataFrameFilter(direction.Short)
 
-    def __right_border__Long(self,df:pd.DataFrame):
+    def __right_border__Long(self, df: pd.DataFrame):
         if df.iloc[1][self.low_label] < df.iloc[0][self.low_label]:
-            return NaN
+            return pd.DataFrame(columns=df.columns)
 
         df_filter_by_low = df[df[self.low_label] < df.iloc[0][self.low_label]]
         if len(df_filter_by_low) > 0:
             right_border_by_low = df_filter_by_low.iloc[0].name
-            df_f:pd.DataFrame = df[df.index < right_border_by_low]
+            df_f: pd.DataFrame = df[df.index < right_border_by_low]
         else:
-            df_f:pd.DataFrame = df
+            df_f: pd.DataFrame = df
 
-        max_idx_arr = df_f[df_f[self.high_label] == df_f[self.high_label].max()].index
+        max_idx_arr = df_f[df_f[self.high_label]
+                           == df_f[self.high_label].max()].index
         if len(max_idx_arr) == 0:
             right_border_by_high = df_f[self.high_label].idxmax()
         else:
             right_border_by_high = max_idx_arr[-1]
 
         df_f = df_f[df_f.index <= right_border_by_high]
-        return df_f  
+        return df_f
 
-    def __right_border__Short(self,df:pd.DataFrame):
+    def __right_border__Short(self, df: pd.DataFrame):
         if df.iloc[1][self.low_label] > df.iloc[0][self.low_label]:
-            return NaN
+            return pd.DataFrame(columns=df.columns)
 
         df_filter_by_low = df[df[self.low_label] > df.iloc[0][self.low_label]]
         if len(df_filter_by_low) > 0:
             right_border_by_low = df_filter_by_low.iloc[0].name
-            df_f:pd.DataFrame = df[df.index < right_border_by_low]
+            df_f: pd.DataFrame = df[df.index < right_border_by_low]
         else:
-            df_f:pd.DataFrame = df
+            df_f: pd.DataFrame = df
 
-        min_idx_arr = df_f[df_f[self.high_label] == df_f[self.high_label].min()].index
+        min_idx_arr = df_f[df_f[self.high_label]
+                           == df_f[self.high_label].min()].index
         if len(min_idx_arr) == 0:
             right_border_by_high = df_f[self.high_label].idxmin()
         else:
             right_border_by_high = min_idx_arr[-1]
 
-        df_f = df_f[df_f.index <= right_border_by_high]  
-        return df_f  
+        df_f = df_f[df_f.index <= right_border_by_high]
+        return df_f
 
-    def filter(self, df:pd.DataFrame)->pd.DataFrame:
+    def filter(self, df: pd.DataFrame) -> pd.DataFrame:
+        if len(df.index) <= 1: return pd.DataFrame(columns=df.columns)
         return self.__right_border_search(df)
 
 class search_wave:
-    def __init__(self,impulse_direction:direction) -> None:
-        self.__dfFilter = DataFrameFilter(impulse_direction)
-        if impulse_direction == direction.Long:
-            self.builder = 
+    def __init__(self, wave_direction: direction) -> None:
+        self.__dfFilter = DataFrameFilter(wave_direction)
+        self.wave_direction = wave_direction
+        self.logger = logging.getLogger("search_wave")
+        pass
 
-    def search(self, df:pd.DataFrame)->List[wave]:
+    def search(self, df: pd.DataFrame) -> List[wave]:
+        _ret = []
+        self.logger.debug(f"Start search waves in DataFrame from {df.index[0]} till {df.index[-1]}")
         df_f = self.__dfFilter.filter(df)
-        
-        
+        self.logger.debug(f"Filtered DataFrame from {df.index[0]} till {df.index[-1]}")
+        for idx in df_f.index[::-1]:
+            self.logger.debug(
+                f"Try build wave from {df_f.index[0]} till {idx}")
+            res, resp = try_build_wave(df_f[df_f.index <= idx],self.wave_direction)
+            if res:
+                self.logger.debug(f"- SUCCESS")
+                _ret.append(resp)
+            else:
+                self.logger.debug(f"- ERROR:")
+                for err in resp:
+                    self.logger.debug(f"-- {err}")
+        return _ret
 
-
-class search_impulse_five:
-    def __init__(self,impulse_direction:direction) -> None:
-        self.search_impulse = search_wave(impulse_direction)
-        self.search_correction = search_wave(impulse_direction.revers())
-    
-    def search(self, df:pd.DataFrame):
-        builer_imp_five = builder_impulse_five()
-        
 

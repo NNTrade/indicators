@@ -1,7 +1,9 @@
 import pandas as pd
 
-from ..direction import direction
-from ..wave import wave
+from src.ElliotWaves.misc.candle_name import High, Low
+
+from ..misc.direction import direction
+from ..misc.wave import wave
 
 from typing import List
 
@@ -61,10 +63,15 @@ def TWx_not_TWy_not_TWz(waves:List[wave], dif_percent: float = 0.2)->bool:
     
     times = [wave.time_is_sec for wave in waves]
     times.sort(reverse=True)
-    return (times[0]/times[2] - 1) > dif_percent
+    
+    for idx,time1 in enumerate(times):
+        for time2 in times[idx+1:]:
+            if (time1/time2 - 1) < dif_percent:
+                return False
+    return True
     
 def EWx_SWx_is_ext_RWx(wave: wave, df:pd.DataFrame)->bool:
     if wave.direction == wave.direction.Long:
-        return (wave.end.price >= max(df["H"])) and (wave.start.price <= min(df["L"]))
+        return (wave.end.price >= max(df[High])) and (wave.start.price <= min(df[Low]))
     elif wave.direction == wave.direction.Short:
-        return (wave.end.price <= min(df["L"])) and (wave.start.price >= max(df["H"]))
+        return (wave.end.price <= min(df[Low])) and (wave.start.price >= max(df[High]))
