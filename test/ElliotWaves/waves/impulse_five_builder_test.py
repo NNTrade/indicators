@@ -6,12 +6,10 @@ import logging
 from src.ElliotWaves.misc.direction import direction
 from src.ElliotWaves.misc.point import point
 from src.ElliotWaves.misc.wave import wave
-from src.ElliotWaves.waves.impulse_five.builder import builder_impulse_five
-
-from src.ElliotWaves.waves.impulse_five.search import DataFrameFilter, search, search_wave
+from src.ElliotWaves.waves.impulse_five_builder import builder
 
 
-class builder_impulse_five_TestCase(unittest.TestCase):
+class builder_TestCase(unittest.TestCase):
 
     def grow(arr: List[int], cur: int, times) -> Tuple[List[int], int]:
         for wave in range(times):
@@ -27,11 +25,11 @@ class builder_impulse_five_TestCase(unittest.TestCase):
 
     def test_define_wave_long(self):
 
-        high_arr, cur = builder_impulse_five_TestCase.grow([], 1, 3)
-        high_arr, cur = builder_impulse_five_TestCase.fall(high_arr, cur, 2)
-        high_arr, cur = builder_impulse_five_TestCase.grow(high_arr, cur, 7)
-        high_arr, cur = builder_impulse_five_TestCase.fall(high_arr, cur, 3)
-        high_arr, cur = builder_impulse_five_TestCase.grow(high_arr, cur, 10)
+        high_arr, cur = builder_TestCase.grow([], 1, 3)
+        high_arr, cur = builder_TestCase.fall(high_arr, cur, 2)
+        high_arr, cur = builder_TestCase.grow(high_arr, cur, 7)
+        high_arr, cur = builder_TestCase.fall(high_arr, cur, 3)
+        high_arr, cur = builder_TestCase.grow(high_arr, cur, 10)
 
         # № | idx   |  ts   | pr H | pr L | Type  | W pr |
         # ---|-------|-------|------|------|-------|------|
@@ -52,7 +50,7 @@ class builder_impulse_five_TestCase(unittest.TestCase):
             "L": low_arr},
             index=times)
 
-        bif = builder_impulse_five(direction.Long)
+        bif = builder(direction.Long)
         wave1 = wave(point(times[0], low_arr[0]), point(times[3], high_arr[3]))
         wave2 = wave(point(times[3], high_arr[3]), point(times[5], low_arr[5]))
         wave3 = wave(point(times[5], low_arr[5]),

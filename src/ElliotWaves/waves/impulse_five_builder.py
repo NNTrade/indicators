@@ -2,13 +2,12 @@ from __future__ import annotations
 from typing import List, Tuple, Union
 from numpy import NaN, number
 import numpy as np
+from ..misc.direction import direction
+from ..rules import rules
+from ..misc.wave import wave
 
-from ...misc.direction import direction
-from ...rules import rules
-from ...misc.wave import wave
 
-
-class builder_impulse_five:
+class builder:
     def __init__(self, impulse_direction: direction, fluent_builder=False) -> None:
         self.__waves: List[wave] = []
         self.__direction = impulse_direction
@@ -55,12 +54,12 @@ class builder_impulse_five:
     def isComplete(self) -> bool:
         return self.next_wave <= 0
 
-    def clone(self) -> builder_impulse_five:
-        _ret = builder_impulse_five(self.direction, self.fluent_builder)
+    def clone(self) -> builder:
+        _ret = builder(self.direction, self.fluent_builder)
         _ret.__waves = [wv for wv in self.__waves]
         return _ret
 
-    def __add_wave(self, wave) -> builder_impulse_five:
+    def __add_wave(self, wave) -> builder:
         if self.fluent_builder:
             _ret = self.clone()
         else:
@@ -92,7 +91,7 @@ class builder_impulse_five:
 
         return (len(error_list) == 0), error_list
 
-    def add_wave1(self, wave1: wave) -> builder_impulse_five:
+    def add_wave1(self, wave1: wave) -> builder:
         return_status, error_list = self.__check_wave1(wave1)
         if return_status:
             return self.__add_wave(wave1)
@@ -100,7 +99,7 @@ class builder_impulse_five:
             raise Exception("Wave adding check FAIL: \n" +
                             "\n".join([("- " + err) for err in error_list]))
 
-    def try_add_wave1(self, wave1: wave) -> Tuple[bool, Union[List[str], builder_impulse_five]]:
+    def try_add_wave1(self, wave1: wave) -> Tuple[bool, Union[List[str], builder]]:
         return_status, error_list = self.__check_wave1(wave1)
         if return_status:
             return True, self.__add_wave(wave1)
@@ -118,7 +117,7 @@ class builder_impulse_five:
 
         return (len(error_list) == 0), error_list
 
-    def add_wave2(self, wave2: wave) -> builder_impulse_five:
+    def add_wave2(self, wave2: wave) -> builder:
         return_status, error_list = self.__check_wave2(wave2)
         if return_status:
             return self.__add_wave(wave2)
@@ -126,7 +125,7 @@ class builder_impulse_five:
             raise Exception("Wave adding check FAIL: \n" +
                             "\n".join([("- " + err) for err in error_list]))
 
-    def try_add_wave2(self, wave2: wave) -> Tuple[bool, Union[List[str], builder_impulse_five]]:
+    def try_add_wave2(self, wave2: wave) -> Tuple[bool, Union[List[str], builder]]:
         return_status, error_list = self.__check_wave2(wave2)
         if return_status:
             return True, self.__add_wave(wave2)
@@ -148,7 +147,7 @@ class builder_impulse_five:
 
         return (len(error_list) == 0), error_list
 
-    def add_wave3(self, wave3: wave) -> builder_impulse_five:
+    def add_wave3(self, wave3: wave) -> builder:
         return_status, error_list = self.__check_wave3(wave3)
         if return_status:
             return self.__add_wave(wave3)
@@ -156,7 +155,7 @@ class builder_impulse_five:
             raise Exception("Wave adding check FAIL: \n" +
                             "\n".join([("- " + err) for err in error_list]))
 
-    def try_add_wave3(self, wave3: wave) -> Tuple[bool, Union[List[str], builder_impulse_five]]:
+    def try_add_wave3(self, wave3: wave) -> Tuple[bool, Union[List[str], builder]]:
         return_status, error_list = self.__check_wave3(wave3)
         if return_status:
             return True, self.__add_wave(wave3)
@@ -181,7 +180,7 @@ class builder_impulse_five:
 
         return (len(error_list) == 0), error_list
 
-    def add_wave4(self, wave4: wave) -> builder_impulse_five:
+    def add_wave4(self, wave4: wave) -> builder:
         return_status, error_list = self.__check_wave4(wave4)
         if return_status:
             return self.__add_wave(wave4)
@@ -189,7 +188,7 @@ class builder_impulse_five:
             raise Exception("Wave adding check FAIL: \n" +
                             "\n".join([("- " + err) for err in error_list]))
 
-    def try_add_wave4(self, wave4: wave) -> Tuple[bool, Union[List[str], builder_impulse_five]]:
+    def try_add_wave4(self, wave4: wave) -> Tuple[bool, Union[List[str], builder]]:
         return_status, error_list = self.__check_wave4(wave4)
         if return_status:
             return True, self.__add_wave(wave4)
@@ -217,7 +216,7 @@ class builder_impulse_five:
 
         return (len(error_list) == 0), error_list
 
-    def add_wave5(self, wave5: wave) -> builder_impulse_five:
+    def add_wave5(self, wave5: wave) -> builder:
         return_status, error_list = self.__check_wave5(wave5)
         if return_status:
             return self.__add_wave(wave5)
@@ -225,13 +224,13 @@ class builder_impulse_five:
             raise Exception("Wave adding check FAIL: \n" +
                             "\n".join([("- " + err) for err in error_list]))
 
-    def try_add_wave5(self, wave5: wave) -> Tuple[bool, Union[List[str], builder_impulse_five]]:
+    def try_add_wave5(self, wave5: wave) -> Tuple[bool, Union[List[str], builder]]:
         return_status, error_list = self.__check_wave5(wave5)
         if return_status:
             return True, self.__add_wave(wave5)
         return return_status, error_list
 
-    def add(self, wave: wave) -> builder_impulse_five:
+    def add(self, wave: wave) -> builder:
         next = self.next_wave
         if next == 1:
             self.add_wave1(wave)
@@ -246,7 +245,7 @@ class builder_impulse_five:
         else:
             raise Exception("All waves is setted")
 
-    def try_add(self, wave: wave) -> Tuple[bool, Union[List[str], builder_impulse_five]]:
+    def try_add(self, wave: wave) -> Tuple[bool, Union[List[str], builder]]:
         next = self.next_wave
         if next == 1:
             return self.try_add_wave1(wave)
@@ -262,15 +261,15 @@ class builder_impulse_five:
             return False, ["All waves is setted"]
 
 
-class factory_impulse_five:
+class factory:
     def __init__(self, impulse_direction: direction) -> None:
         self.impulse_direction = impulse_direction
         pass
 
-    def build(self, impulse_direction: direction = np.NaN, waves: List[wave] = [], fluent_builder=False) -> builder_impulse_five:
+    def build(self, impulse_direction: direction = np.NaN, waves: List[wave] = [], fluent_builder=False) -> builder:
         if np.isnan(impulse_direction):
             impulse_direction = self.impulse_direction
 
-        _ret = builder_impulse_five(impulse_direction, fluent_builder)
+        _ret = builder(impulse_direction, fluent_builder)
         for wave in waves:
             _ret.add(wave)

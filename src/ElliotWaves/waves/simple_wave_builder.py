@@ -1,11 +1,11 @@
 from typing import List, Tuple, Union
 import pandas as pd
-from ...misc.direction import direction
-from ...misc.point import point
 import logging
-from ...misc.candle_name import * 
-from ...misc.wave import wave
-from ...rules import rules
+from ..misc.direction import direction
+from ..misc.point import point
+from ..misc.candle_name import * 
+from ..misc.wave import wave
+from ..rules import rules
 
 
 def __build_wave(df: pd.DataFrame, wave_direction: direction) -> wave:

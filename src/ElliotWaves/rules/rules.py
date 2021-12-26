@@ -48,6 +48,8 @@ def W2_dif_W4(wave2: wave, wave4: wave)->bool:
 
 def HWx_gt_HWy_and_HWx_gt_HWz(waves1:wave, wave3:wave, wave5:wave, dif_percent:float = 0.2)->bool:
     '''
+    HWx >> HWy & HWx >> HWz
+    
     power = HWx/HWy - 1
     '''
     heights = [waves1.height,wave3.height,wave5.height]
@@ -56,6 +58,8 @@ def HWx_gt_HWy_and_HWx_gt_HWz(waves1:wave, wave3:wave, wave5:wave, dif_percent:f
     
 def TWx_not_TWy_not_TWz(waves:List[wave], dif_percent: float = 0.2)->bool:
     '''
+    TWx <> TWy <>TWz 
+    
     dif_percent = TWx/TWy - 1
     '''
     if len(waves) != 3:
