@@ -5,7 +5,7 @@ from src.ElliotWaves.misc.candle_name import High, Low
 from ..misc.direction import direction
 from ..misc.wave import wave
 
-from typing import List
+from typing import List, Tuple
 
 def __direction_adapter__(base_compare: bool, impulse_direction: direction)-> bool:
     if impulse_direction == impulse_direction.Long: return base_compare
@@ -75,4 +75,15 @@ def EWx_SWx_is_ext_RWx(wave: wave, df:pd.DataFrame)->bool:
         return (wave.end.price >= max(df[High])) and (wave.start.price <= min(df[Low]))
     elif wave.direction == direction.Short:
         return (wave.end.price <= min(df[Low])) and (wave.start.price >= max(df[High]))
-
+    
+def EXx_eq_SWx1(wave:wave, next_wave:wave)->bool:
+    return wave.end.isEqual(next_wave.start)
+           
+def ESWx_take_HL_of_ES_candle(wave_direction:direction)-> Tuple[str,str]:
+    if wave_direction == direction.Long:
+        start_label = Low
+        end_label = High
+    elif wave_direction == direction.Short:
+        start_label = High
+        end_label = Low
+    return start_label, end_label

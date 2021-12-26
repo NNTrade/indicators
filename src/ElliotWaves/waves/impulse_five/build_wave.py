@@ -9,12 +9,7 @@ from ...rules import rules
 
 
 def __build_wave(df: pd.DataFrame, wave_direction: direction) -> wave:
-    if wave_direction == direction.Long:
-        start_label = Low
-        end_label = High
-    elif wave_direction == direction.Short:
-        start_label = High
-        end_label = Low
+    start_label,end_label = rules.ESWx_take_HL_of_ES_candle(wave_direction)
     start_sr = df[start_label]
     end_sr = df[end_label]
 

@@ -77,7 +77,7 @@ class builder_impulse_five:
             raise Exception(
                 f"Wave {wave_number-1} should be setted before wave {wave_number}")
 
-        if not self.__waves[wave_number-2].end.isEqual(wave.start):
+        if not rules.EXx_eq_SWx1(self.__waves[wave_number-2],wave):
             raise Exception(
                 f"Start of wave {wave_number} should be the same as end of wave {wave_number-1}")
 
