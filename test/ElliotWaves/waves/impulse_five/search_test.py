@@ -227,13 +227,13 @@ class search_TestCase(unittest.TestCase):
             self.assertEqual(wv.end.timestamp,times[end_idx])
             self.assertEqual(wv.end.price,low_arr[end_idx])
         
-        series_five1 = res[0]
+        series_five1 = res[0].sub_waves
         
-        check_up(series_five1.get_wave(1),0,3)
-        check_down(series_five1.get_wave(2),3,5)
-        check_up(series_five1.get_wave(3),5,12)
-        check_down(series_five1.get_wave(4),12,15)
-        check_up(series_five1.get_wave(5),15,24)
+        check_up(series_five1[0],0,3)
+        check_down(series_five1[1],3,5)
+        check_up(series_five1[2],5,12)
+        check_down(series_five1[3],12,15)
+        check_up(series_five1[4],15,24)
         
     def test_define_wave_short(self):
         
@@ -278,13 +278,13 @@ class search_TestCase(unittest.TestCase):
             self.assertEqual(wv.end.timestamp,times[end_idx])
             self.assertEqual(wv.end.price,low_arr[end_idx])
         
-        series_five1 = res[0]
+        series_five1 = res[0].sub_waves
         
-        check_down(series_five1.get_wave(1),0,9)
-        check_up(series_five1.get_wave(2),9,12)
-        check_down(series_five1.get_wave(3),12,19)
-        check_up(series_five1.get_wave(4),19,21)
-        check_down(series_five1.get_wave(5),21,24)
+        check_down(series_five1[0],0,9)
+        check_up(series_five1[1],9,12)
+        check_down(series_five1[2],12,19)
+        check_up(series_five1[3],19,21)
+        check_down(series_five1[4],21,24)
         
             
         

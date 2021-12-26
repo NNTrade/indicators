@@ -11,7 +11,7 @@ from ...misc.candle_name import *
 from .build_wave import try_build_wave
 
 
-def search(df: pd.DataFrame, impulse_direction: direction = None, full_scan: bool = False) -> List[builder_impulse_five]:
+def search(df: pd.DataFrame, impulse_direction: direction = None, full_scan: bool = False) -> List[wave]:
     logger = logging.getLogger("Search")
     _ret = []
     while len(df.index) > 0:
@@ -28,11 +28,11 @@ def search(df: pd.DataFrame, impulse_direction: direction = None, full_scan: boo
             df = df[df.index >= df.index[1]]
         else:
             break
-    return _ret
+    return [b.build() for b in _ret]
 
 
 def __search(df: pd.DataFrame, builder_imp_five: builder_impulse_five, try_search=False) -> Tuple[List[builder_impulse_five], List[builder_impulse_five]]:
-    search_wv = search_wave(builder_imp_five.next_wave_direction())
+    search_wv = search_wave(builder_imp_five.next_wave_direction)
     wave_list = search_wv.search(df, True)
 
     _ret = []
@@ -200,14 +200,6 @@ class search_wave:
         self.wave_direction = wave_direction
         self.logger = logging.getLogger("search_wave")
         self.double_filter = double_filter(wave_direction)
-        if wave_direction == direction.Long:
-            self.high_label = High
-            self.low_label = Low
-        elif wave_direction == direction.Short:
-            self.high_label = Low
-            self.low_label = High            
-        else:
-            raise Exception(f"unknown direction {wave_direction}")
         pass
 
     def search(self, df: pd.DataFrame, next_dircetion_will_be_reversed: bool = False) -> List[wave]:
