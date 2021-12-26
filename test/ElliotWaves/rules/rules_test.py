@@ -347,25 +347,25 @@ class TWx_not_TWy_not_TWz_TestCase(unittest.TestCase):
 
     def test_TW3_gt_than_TW1__success(self):
         dt_sw1 = pd.Timestamp.today()
-        dt_ew1 = pd.Timestamp.today() + pd.Timedelta(days = 1)
-        dt_sw2 = pd.Timestamp.today() + pd.Timedelta(days = 1)
-        dt_ew2 = pd.Timestamp.today() + pd.Timedelta(days = 2) 
-        dt_sw3 = pd.Timestamp.today() + pd.Timedelta(days = 2)
-        dt_ew3 = pd.Timestamp.today() + pd.Timedelta(days = 4, seconds=1)
+        dt_ew1 = dt_sw1 + pd.Timedelta(days = 1)
+        dt_sw2 = dt_ew1
+        dt_ew2 = dt_sw2 + pd.Timedelta(days = 2) 
+        dt_sw3 = dt_ew2
+        dt_ew3 = dt_sw3 + pd.Timedelta(days = 4)
 
         wave1 = wave(point(dt_sw1, 1),point(dt_ew1, 3)) 
         wave2 = wave(point(dt_sw2, 2),point(dt_ew2, 4)) 
         wave3 = wave(point(dt_sw3, 5),point(dt_ew3, 7))
 
-        self.assertTrue(TWx_not_TWy_not_TWz([wave1,wave2, wave3], dif_percent=1))
+        self.assertTrue(TWx_not_TWy_not_TWz([wave1,wave2, wave3], dif_percent=0.5))
     
     def test_TW3_not_gt_than_TW1__fail(self):
         dt_sw1 = pd.Timestamp.today()
-        dt_ew1 = pd.Timestamp.today() + pd.Timedelta(days = 1)
-        dt_sw2 = pd.Timestamp.today() + pd.Timedelta(days = 1)
-        dt_ew2 = pd.Timestamp.today() + pd.Timedelta(days = 2) 
-        dt_sw3 = pd.Timestamp.today() + pd.Timedelta(days = 2)
-        dt_ew3 = pd.Timestamp.today() + pd.Timedelta(days = 4)
+        dt_ew1 = dt_sw1 + pd.Timedelta(days = 1)
+        dt_sw2 = dt_ew1
+        dt_ew2 = dt_sw2 + pd.Timedelta(days = 2) 
+        dt_sw3 = dt_ew2
+        dt_ew3 = dt_sw3 + pd.Timedelta(days = 4)
 
         wave1 = wave(point(dt_sw1, 1),point(dt_ew1, 3)) 
         wave2 = wave(point(dt_sw2, 2),point(dt_ew2, 4)) 

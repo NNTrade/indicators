@@ -213,7 +213,7 @@ class search_TestCase(unittest.TestCase):
             index=times)
         
         res = search(df,impulse_direction=direction.Long)
-        self.assertTrue(len(res) == 3)
+        self.assertTrue(len(res) == 1)
         
         def check_up(wv:wave,start_idx:int,end_idx:int):
             self.assertEqual(wv.start.timestamp.day,times[start_idx].day)
@@ -235,22 +235,6 @@ class search_TestCase(unittest.TestCase):
         check_down(series_five1.get_wave(4),12,15)
         check_up(series_five1.get_wave(5),15,24)
         
-        series_five1 = res[1]
-        
-        check_up(series_five1.get_wave(1),0,3)
-        check_down(series_five1.get_wave(2),3,5)
-        check_up(series_five1.get_wave(3),5,12)
-        check_down(series_five1.get_wave(4),12,15)
-        check_up(series_five1.get_wave(5),15,20)
-        
-        series_five1 = res[2]
-        
-        check_up(series_five1.get_wave(1),0,3)
-        check_down(series_five1.get_wave(2),3,5)
-        check_up(series_five1.get_wave(3),5,12)
-        check_down(series_five1.get_wave(4),12,15)
-        check_up(series_five1.get_wave(5),15,19)
-    
     def test_define_wave_short(self):
         
         cur = 15

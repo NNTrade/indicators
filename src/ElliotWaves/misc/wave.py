@@ -17,7 +17,7 @@ class wave:
         elif self.__end.price < self.__start.price:
             self.__direction = direction.Short
         else:
-            self.__direction = NaN
+            self.__direction = None
         pass
     
     @property

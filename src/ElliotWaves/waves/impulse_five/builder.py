@@ -56,6 +56,9 @@ class builder_impulse_five:
         if self.__wave1 is not None:
             error_list.append("Wave 1 is already setted")
 
+        if wave1.direction is None:
+            error_list.append("Wave must have direction")
+            
         return (len(error_list) == 0), error_list
 
     def add_wave1(self, wave1: wave) -> builder_impulse_five:
@@ -80,13 +83,16 @@ class builder_impulse_five:
 
         if self.__wave1 is None:
             raise Exception("Wave 1 should be setted before wave 2")
-
+        
         if not self.__wave1.end.isEqual(wave2.start):
             raise Exception(
                 "Start of wave 2 should be the same as end of wave 1")
 
-        if not rules.EW2_gt_SW1(self.__wave1, wave2, self.__direction):
-            error_list.append("EW2 > SW1: FAIL")
+        if wave2.direction is None:
+            error_list.append("Wave must have direction")
+        else:
+            if not rules.EW2_gt_SW1(self.__wave1, wave2, self.__direction):
+                error_list.append("EW2 > SW1: FAIL")
 
         return (len(error_list) == 0), error_list
 
@@ -116,12 +122,15 @@ class builder_impulse_five:
         if not self.__wave2.end.isEqual(wave3.start):
             raise Exception(
                 "Start of wave 3 should be the same as end of wave 2")
+            
+        if wave3.direction is None:
+            error_list.append("Wave must have direction")
+        else:
+            if not rules.EW3_gt_EW1(self.__wave1, wave3, self.__direction):
+                error_list.append("EW3 > EW1: FAIL")
 
-        if not rules.EW3_gt_EW1(self.__wave1, wave3, self.__direction):
-            error_list.append("EW3 > EW1: FAIL")
-
-        if not rules.TWx_not_TWy_not_TWz([self.__wave1, self.__wave2, wave3]):
-            error_list.append("TWx <> TWy <>TWz: FAIL")
+            if not rules.TWx_not_TWy_not_TWz([self.__wave1, self.__wave2, wave3]):
+                error_list.append("TWx <> TWy <>TWz: FAIL")
 
         return (len(error_list) == 0), error_list
 
@@ -151,15 +160,18 @@ class builder_impulse_five:
         if not self.__wave3.end.isEqual(wave4.start):
             raise Exception(
                 "Start of wave 4 should be the same as end of wave 3")
+            
+        if wave4.direction is None:
+            error_list.append("Wave must have direction")
+        else:
+            if not rules.EW4_gt_EW1(self.__wave1, wave4, self.__direction):
+                error_list.append("EW4 > EW1: FAIL")
 
-        if not rules.EW4_gt_EW1(self.__wave1, wave4, self.__direction):
-            error_list.append("EW4 > EW1: FAIL")
+            if not rules.W2_dif_W4(self.__wave2, wave4):
+                error_list.append("W2 different W4: FAIL")
 
-        if not rules.W2_dif_W4(self.__wave2, wave4):
-            error_list.append("W2 different W4: FAIL")
-
-        if not rules.TWx_not_TWy_not_TWz([self.__wave2, self.__wave3, wave4]):
-            error_list.append("TWx <> TWy <>TWz: FAIL")
+            if not rules.TWx_not_TWy_not_TWz([self.__wave2, self.__wave3, wave4]):
+                error_list.append("TWx <> TWy <>TWz: FAIL")
 
         return (len(error_list) == 0), error_list
 
@@ -190,17 +202,20 @@ class builder_impulse_five:
             raise Exception(
                 "Start of wave 5 should be the same as end of wave 4")
 
-        if not rules.HW3_gt_HW1_or_HW3_gt_HW5(self.__wave1, self.__wave3, wave5):
-            error_list.append("HW3 > HW1 || HW3 > HW5: FAIL")
+        if wave5.direction is None:
+            error_list.append("Wave must have direction")
+        else:
+            if not rules.HW3_gt_HW1_or_HW3_gt_HW5(self.__wave1, self.__wave3, wave5):
+                error_list.append("HW3 > HW1 || HW3 > HW5: FAIL")
 
-        if not rules.EW5_gt_EW3(self.__wave3, wave5, self.__direction):
-            error_list.append("EW5 > EW3: FAIL")
+            if not rules.EW5_gt_EW3(self.__wave3, wave5, self.__direction):
+                error_list.append("EW5 > EW3: FAIL")
 
-        if not rules.HWx_gt_HWy_and_HWx_gt_HWz(self.__wave1, self.__wave3, wave5):
-            error_list.append("HWx >> HWy & HWx >> HWz: FAIL")
+            if not rules.HWx_gt_HWy_and_HWx_gt_HWz(self.__wave1, self.__wave3, wave5):
+                error_list.append("HWx >> HWy & HWx >> HWz: FAIL")
 
-        if not rules.TWx_not_TWy_not_TWz([self.__wave3, self.__wave4, wave5]):
-            error_list.append("TWx <> TWy <>TWz: FAIL")
+            if not rules.TWx_not_TWy_not_TWz([self.__wave3, self.__wave4, wave5]):
+                error_list.append("TWx <> TWy <>TWz: FAIL")
 
         return (len(error_list) == 0), error_list
 

@@ -71,7 +71,8 @@ def TWx_not_TWy_not_TWz(waves:List[wave], dif_percent: float = 0.2)->bool:
     return True
     
 def EWx_SWx_is_ext_RWx(wave: wave, df:pd.DataFrame)->bool:
-    if wave.direction == wave.direction.Long:
+    if wave.direction == direction.Long:
         return (wave.end.price >= max(df[High])) and (wave.start.price <= min(df[Low]))
-    elif wave.direction == wave.direction.Short:
+    elif wave.direction == direction.Short:
         return (wave.end.price <= min(df[Low])) and (wave.start.price >= max(df[High]))
+
