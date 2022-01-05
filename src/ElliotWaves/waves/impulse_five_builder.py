@@ -6,8 +6,10 @@ from ..misc.direction import direction
 from ..rules import rules
 from ..misc.wave import wave
 
-
 class builder:
+    """
+    Строитель 5-ти волновой структуры
+    """
     def __init__(self, impulse_direction: direction, fluent_builder=False) -> None:
         self.__waves: List[wave] = []
         self.__direction = impulse_direction
@@ -246,6 +248,14 @@ class builder:
             raise Exception("All waves is setted")
 
     def try_add(self, wave: wave) -> Tuple[bool, Union[List[str], builder]]:
+        """Пробуем добавить волну к 5-ти волновой структуре
+
+        Args:
+            wave (wave): добавляемая волна
+
+        Returns:
+            Tuple[bool, Union[List[str], builder]]: результат добавления Кортеж(удалось добавить Да/Нет; Если нет:список ошибок, если да: строитель 5-ти волновой структуры)
+        """
         next = self.next_wave
         if next == 1:
             return self.try_add_wave1(wave)

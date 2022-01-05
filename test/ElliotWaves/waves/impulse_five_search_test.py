@@ -48,7 +48,7 @@ class search_TestCase(unittest.TestCase):
             "L": low_arr},
             index=times)
         
-        res = search(df,impulse_direction=direction.Long)
+        res,_ = search(df,impulse_direction=direction.Long)
         self.assertTrue(len(res) == 1)
         
         def check_up(wv:wave,start_idx:int,end_idx:int):
@@ -99,7 +99,7 @@ class search_TestCase(unittest.TestCase):
             "L": low_arr},
             index=times)
         
-        res = search(df,impulse_direction=direction.Short)
+        res,_ = search(df,impulse_direction=direction.Short)
         self.assertTrue(len(res) == 1)
         
         def check_up(wv:wave,start_idx:int,end_idx:int):
@@ -122,6 +122,54 @@ class search_TestCase(unittest.TestCase):
         check_up(series_five1[3],19,21)
         check_down(series_five1[4],21,24)
         
-            
+    def test_define_dead_wave_long(self):
+        
+        high_arr,cur = search_TestCase.grow([], 1, 3)
+        high_arr,cur = search_TestCase.fall(high_arr, cur, 2)
+        high_arr,cur = search_TestCase.grow(high_arr, cur, 7)
+        high_arr,cur = search_TestCase.fall(high_arr, cur, 3)
+        high_arr,cur = search_TestCase.grow(high_arr, cur, 2)
+        
+        # № | idx   |  ts   | pr H | pr L | Type  | W pr |
+        #---|-------|-------|------|------|-------|------|
+        # 0 | 00-03 | 01-04 | 1-4  | 0-3  | Long  | 0-4  |
+        # 1 | 03-05 | 04-06 | 4-2  | 3-1  | Short | 4-1  |
+        # 2 | 05-12 | 06-13 | 2-9  | 1-8  | Long  | 1-9  |
+        # 3 | 12-15 | 13-16 | 9-6  | 8-5  | Short | 9-5  |
+        # 4 | 15-17 | 16-18 | 6-8  | 5-7  | Long  |      |
+        
+        times = []
+        for day in range(len(high_arr)):
+            times.append(pd.Timestamp(year=2021, month=1, day=day+1))
+        
+        low_arr = [h-1 for h in high_arr]
+        
+        df = pd.DataFrame(data={
+            "H": high_arr,
+            "L": low_arr},
+            index=times)
+        
+        _success_ret,_dead_ret = search(df,impulse_direction=direction.Long)
+        self.assertTrue(len(_success_ret) == 0)
+        self.assertTrue(len(_dead_ret) == 1)
+        
+        def check_up(wv:wave,start_idx:int,end_idx:int):
+            self.assertEqual(wv.start.timestamp.day,times[start_idx].day)
+            self.assertEqual(wv.start.price,low_arr[start_idx])
+            self.assertEqual(wv.end.timestamp,times[end_idx])
+            self.assertEqual(wv.end.price,high_arr[end_idx])
+        
+        def check_down(wv:wave,start_idx:int,end_idx:int):
+            self.assertEqual(wv.start.timestamp.day,times[start_idx].day)
+            self.assertEqual(wv.start.price,high_arr[start_idx])
+            self.assertEqual(wv.end.timestamp,times[end_idx])
+            self.assertEqual(wv.end.price,low_arr[end_idx])
+        
+        series_five1 = _dead_ret[0].sub_waves
+        
+        check_up(series_five1[0],0,3)
+        check_down(series_five1[1],3,5)
+        check_up(series_five1[2],5,12)
+        check_down(series_five1[3],12,15)  
         
     

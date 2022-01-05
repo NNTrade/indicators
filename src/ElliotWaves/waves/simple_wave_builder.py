@@ -9,6 +9,9 @@ from ..rules import rules
 
 
 def __build_wave(df: pd.DataFrame, wave_direction: direction) -> wave:
+    '''
+    Создать инстанцую волны (wave) на указанном отрезке df в указанном напрвлении wave_directian
+    '''
     start_label,end_label = rules.ESWx_take_HL_of_ES_candle(wave_direction)
     start_sr = df[start_label]
     end_sr = df[end_label]
@@ -20,19 +23,24 @@ def __build_wave(df: pd.DataFrame, wave_direction: direction) -> wave:
 
 
 def __check_wave(wave: wave, df: pd.DataFrame, wave_direction: direction) -> Tuple[bool, List[str]]:
+    '''
+    Проверить, что построенная полна удовлетворяет правилам
+    '''
     return_status = True
     error_list = []
 
+    ## направление созданный волны = требуемому направлению    
     if wave.direction != wave_direction:
         error_list.append(
             f"Wave direction is not {wave_direction}: FAIL")
         return_status = False
 
+    ## длина волны > 1 свечи
     if wave.time_is_sec == 0:
         error_list.append(
             f"Wave couldn't be in one candle: FAIL")
         return_status = False
-        
+    
     if not rules.EWx_SWx_is_ext_RWx(wave, df):
         error_list.append("EWx | SWx is extremum RWx: FAIL")
         return_status = False
@@ -41,6 +49,9 @@ def __check_wave(wave: wave, df: pd.DataFrame, wave_direction: direction) -> Tup
 
 
 def try_build_wave(df: pd.DataFrame, wave_direction: direction) -> Tuple[bool, Union[wave, List[str]]]:
+    '''
+    Попытаться построить волну на указанном отрезке df в указанном напрвлении wave_directian
+    '''
     logger = logging.getLogger("try_build_wave")
     logger.debug(f"Try build {wave_direction} wave from {df.index[0]} till {df.index[-1]}")
 
@@ -58,6 +69,9 @@ def try_build_wave(df: pd.DataFrame, wave_direction: direction) -> Tuple[bool, U
 
 
 def build_wave(df: pd.DataFrame, wave_direction: direction) -> wave:
+    '''
+    Построить волну на указанном отрезке df в указанном напрвлении wave_directian
+    '''
     logger = logging.getLogger(f"build_wave")
 
     logger.debug(f"Build {wave_direction} wave from {df.index[0]} till {df.index[-1]}")

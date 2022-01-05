@@ -7,7 +7,58 @@ from ..misc.direction import direction
 from ..misc.wave import wave
 from ..misc.candle_name import *
 
+
+class search_wave:
+    '''
+    Поиск простой волны
+    '''
+    def __init__(self, wave_direction: direction) -> None:
+        self.__dfFilter = DataFrameFilter(wave_direction)
+        self.wave_direction = wave_direction
+        self.logger = logging.getLogger("search_wave")
+        self.double_filter = double_filter(wave_direction)
+        pass
+
+    def search(self, df: pd.DataFrame, next_dircetion_will_be_reversed: bool = False) -> List[wave]:
+        """Ищем все возможные простые волны на данном интервале и с началом в начале интервале
+
+        Args:
+            df (pd.DataFrame): интервал поиска
+            next_dircetion_will_be_reversed (bool, optional): Указатель, что следующая волна будет противоположно направлена. Defaults to False.
+
+        Returns:
+            List[wave]: список найденных волн
+        """
+        _ret = []
+        self.logger.debug(
+            f"Start search waves in DataFrame from {df.index[0]} till {df.index[-1]}")
+        df_f = self.__dfFilter.filter(df)
+        self.logger.debug(
+            f"Filtered DataFrame from {df.index[0]} till {df.index[-1]}")
+        for idx in df_f.index[::-1]:
+
+            if next_dircetion_will_be_reversed:
+                if not self.double_filter.check(df_f,idx):
+                    continue
+
+            self.logger.debug(
+                f"Try build wave from {df_f.index[0]} till {idx}")
+            res, resp = try_build_wave(
+                df_f[df_f.index <= idx], self.wave_direction)
+            if res:
+                self.logger.debug(f"- SUCCESS")
+                _ret.append(resp)
+            else:
+                self.logger.debug(f"- ERROR:")
+                for err in resp:
+                    self.logger.debug(f"-- {err}")
+        return _ret
+
 class DataFrameFilter:
+    '''
+    Фильтр DataFrame для поска волны
+    Сужает область поска полны, отбрасывая области в которые волна точно не сможет попасть
+    '''
     def __init__(self, wave_direction: direction) -> None:
         if wave_direction == direction.Long:
             self.high_label = High
@@ -30,9 +81,11 @@ class DataFrameFilter:
         return DataFrameFilter(direction.Short)
 
     def __right_border__Long(self, df: pd.DataFrame):
+        ## Если сделующая свеча противоположна направлена испомомму направлению, что вариантов нет
         if df.iloc[1][self.low_label] < df.iloc[0][self.low_label]:
             return pd.DataFrame(columns=df.columns)
 
+        ## Ищем границу, на основе того, что волна не должна опускаться ниже старта
         df_filter_by_low = df[df[self.low_label] < df.iloc[0][self.low_label]]
         if len(df_filter_by_low) > 0:
             right_border_by_low = df_filter_by_low.iloc[0].name
@@ -40,6 +93,7 @@ class DataFrameFilter:
         else:
             df_f: pd.DataFrame = df
 
+        ## Ищем максимум на имеющемся интервале, дальше него волна не может зайти
         max_idx_arr = df_f[df_f[self.high_label]
                            == df_f[self.high_label].max()].index
         if len(max_idx_arr) == 0:
@@ -50,10 +104,11 @@ class DataFrameFilter:
         df_f = df_f[df_f.index <= right_border_by_high]
         return df_f
 
-    def __right_border__Short(self, df: pd.DataFrame):
+    def __right_border__Short(self, df: pd.DataFrame):        
         if df.iloc[1][self.low_label] > df.iloc[0][self.low_label]:
             return pd.DataFrame(columns=df.columns)
 
+       
         df_filter_by_low = df[df[self.low_label] > df.iloc[0][self.low_label]]
         if len(df_filter_by_low) > 0:
             right_border_by_low = df_filter_by_low.iloc[0].name
@@ -78,6 +133,10 @@ class DataFrameFilter:
 
 
 class double_filter:
+    '''
+    Проверяем, что последующее движение будет противоположным относительно текущего
+    это позволяет исключить заведомо ложные волны, т.к. последующее движение будет продолжать текущую волну
+    '''
     def __init__(self, wave_direction: direction) -> None:
         self.wave_direction = wave_direction
         self.logger = logging.getLogger("double_fliter")
@@ -120,36 +179,3 @@ class double_filter:
         return self.compare_func(df,idx)
 
 
-class search_wave:
-    def __init__(self, wave_direction: direction) -> None:
-        self.__dfFilter = DataFrameFilter(wave_direction)
-        self.wave_direction = wave_direction
-        self.logger = logging.getLogger("search_wave")
-        self.double_filter = double_filter(wave_direction)
-        pass
-
-    def search(self, df: pd.DataFrame, next_dircetion_will_be_reversed: bool = False) -> List[wave]:
-        _ret = []
-        self.logger.debug(
-            f"Start search waves in DataFrame from {df.index[0]} till {df.index[-1]}")
-        df_f = self.__dfFilter.filter(df)
-        self.logger.debug(
-            f"Filtered DataFrame from {df.index[0]} till {df.index[-1]}")
-        for idx in df_f.index[::-1]:
-
-            if next_dircetion_will_be_reversed:
-                if not self.double_filter.check(df_f,idx):
-                    continue
-
-            self.logger.debug(
-                f"Try build wave from {df_f.index[0]} till {idx}")
-            res, resp = try_build_wave(
-                df_f[df_f.index <= idx], self.wave_direction)
-            if res:
-                self.logger.debug(f"- SUCCESS")
-                _ret.append(resp)
-            else:
-                self.logger.debug(f"- ERROR:")
-                for err in resp:
-                    self.logger.debug(f"-- {err}")
-        return _ret

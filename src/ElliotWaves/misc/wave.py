@@ -40,6 +40,10 @@ class wave:
         return [wv for wv in self.__sub_waves]
     
     @property
+    def sub_wave_count(self)->int:
+        return len(self.__sub_waves)
+    
+    @property
     def start(self) -> point:
         return self.__start
 
