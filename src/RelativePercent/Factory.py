@@ -39,8 +39,15 @@ class PercentFactory:
         return pd.concat(ret_sr_arr, axis=1)
 
 def get_percent(sr1:pd.Series,sr2:pd.Series, use_abs:bool = False)->pd.Series:
-    """
-    return pandas Series with percent sr1 - sr2 / sr2
+    """return pandas Series with percent sr1 - sr2 / sr2
+
+    Args:
+        sr1 (pd.Series): series main
+        sr2 (pd.Series): series base
+        use_abs (bool, optional): get abs percent. Defaults to False.
+
+    Returns:
+        pd.Series: Series with percent
     """
     ret_sr = ( sr1 - sr2 ) /sr2 * 100
     if use_abs:

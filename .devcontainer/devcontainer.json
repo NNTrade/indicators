@@ -36,7 +36,8 @@
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"ms-python.python",
-		"donjayamanne.python-extension-pack"
+		"donjayamanne.python-extension-pack",
+		"visualstudioexptteam.intellicode-api-usage-examples"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.

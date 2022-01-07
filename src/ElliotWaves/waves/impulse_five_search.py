@@ -9,6 +9,24 @@ from ..misc.direction import direction
 from ..misc.wave import wave
 from ..misc.candle_name import *
 
+def condens_sub_waves(wave_list:List[wave])->List[List[wave]]:
+    """Преобразует найденные серии волн в массив подволн. Если волна не имеет подволны, то преобразуем ее в массив с одной волной
+
+    Args:
+        wave_list (List[wave]): список найденных волн
+
+    Returns:
+        List[List[wave]]: Массив серии волн
+    """
+    _ret_wave_list:List[List[wave]] = []
+    for dead in wave_list:
+        sb_wv = dead.sub_waves
+        if len(sb_wv) == 0:
+            _ret_wave_list.append([dead])
+        else:
+            _ret_wave_list.append(sb_wv)
+    return _ret_wave_list
+
 def search(df: pd.DataFrame, impulse_direction: direction = None, full_scan: bool = False) -> Tuple[List[wave], List[wave]]:
     """Ищем возможные волны на участке
 

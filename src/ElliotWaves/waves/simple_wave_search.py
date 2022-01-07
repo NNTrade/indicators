@@ -7,7 +7,6 @@ from ..misc.direction import direction
 from ..misc.wave import wave
 from ..misc.candle_name import *
 
-
 class search_wave:
     '''
     Поиск простой волны
