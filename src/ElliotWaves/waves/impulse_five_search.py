@@ -2,7 +2,6 @@ from __future__ import annotations
 import logging
 from typing import List, Tuple
 import pandas as pd
-from src.ElliotWaves import waves
 from .impulse_five_builder import builder
 from .simple_wave_search import search_wave
 from ..misc.direction import direction
@@ -59,6 +58,9 @@ def search(df: pd.DataFrame, impulse_direction: direction = None, full_scan: boo
         else:
             break
     return ([b.build() for b in _ret],[b.build() for b in _dead_ret])
+
+def research(df: pd.DataFrame, unclosed_waves:List[wave], impulse_direction: direction = None, full_scan: bool = False) -> Tuple[List[wave], List[wave]]:
+    return NotImplementedError()
 
 def __search(df: pd.DataFrame, builder_imp_five: builder) -> Tuple[List[builder], List[builder]]:
     """Ищем следующую волну в серии на участке
