@@ -1,0 +1,2 @@
+git+ssh://git@github.com/NNTrade/MongoDB-cache.git
+pandas_data_reader_service_core @ git+ssh://git@github.com/NNTrade/pandas-data-reader-service-core.git
