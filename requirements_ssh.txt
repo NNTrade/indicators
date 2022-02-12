@@ -1,1 +1,1 @@
-git+ssh://git@github.com/NNTrade/Quote-source-python-client.git
+quote_source.client @ git+ssh://git@github.com/NNTrade/Quote-source-python-client.git
