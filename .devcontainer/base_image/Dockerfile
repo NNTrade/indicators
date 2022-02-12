@@ -9,5 +9,7 @@ RUN apt-get install -y openssh-client git
 RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 COPY requirements_ssh.txt /tmp/pip-tmp/
-RUN --mount=type=ssh pip3 --no-cache-dir install -U -r /tmp/pip-tmp/requirements_ssh.txt \ 
+COPY requirements_dev_sh.txt /tmp/pip-tmp/
+RUN    --mount=type=ssh pip3 --no-cache-dir install -U -r /tmp/pip-tmp/requirements_ssh.txt \ 
+    && --mount=type=ssh pip3 --no-cache-dir install -U -r /tmp/pip-tmp/requirements_dev_ssh.txt \ 
     && rm -rf /tmp/pip-tmp

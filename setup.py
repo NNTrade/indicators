@@ -1,18 +1,23 @@
 import setuptools
 import os
 from pathlib import Path
+import pkg_resources
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-file_path = os.path.join(Path('.'),"requirements.txt")
-import pkg_resources
-with open(file_path) as requirements_txt:
-    install_requires = [
-        str(requirement)
-        for requirement
-        in pkg_resources.parse_requirements(requirements_txt)
-    ]
+def get_req_files(file:str):
+    file_path = os.path.join(Path('.'),file)
+    with open(file_path) as requirements_txt:
+        return [str(requirement) for requirement in pkg_resources.parse_requirements(requirements_txt)]
+
+def get_requirements():
+    ret_requires = []
+    for req_txt in get_req_files("requirements.txt"):
+        ret_requires.append(req_txt)
+    for req_txt in get_req_files("requirements_ssh.txt"):
+        ret_requires.append(req_txt)
+    return ret_requires
 
 lib = "traiding.indicator"
 
@@ -26,7 +31,7 @@ setuptools.setup(
     url="https://github.com/NNTrade/indicators",
     packages=[f"{lib}.{pkg}" for pkg in setuptools.find_packages(where="src")],
     package_dir={lib:'src'},
-    install_requires=install_requires,
+    install_requires=get_requirements(),
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
