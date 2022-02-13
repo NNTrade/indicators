@@ -3,12 +3,11 @@ import unittest
 import pandas as pd
 from pandas import Timestamp as datetime
 import numpy as np
-from src.candle_up_time_frame.builder import FirstInCandleFlagBuilder, NewOpenColBuilder, NewCloseColBuilder,NewLowColBuilder,NewHighColBuilder, NewVolumeColBuilder, LastInCandleFlagBuilder
+from src.candle_up_time_frame.builder import get_first_in_candle_flag, get_last_in_candle_flag, get_new_open_col, get_new_close_col,get_new_high_col, get_new_low_col, get_new_volume_col
 from src.candle_up_time_frame.dt_compare import compare_strategy
 from quote_source.client.TimeFrame import TimeFrame
 
-
-class FirstInCandleFlagBuilderTestCase(unittest.TestCase):
+class GetFirstInCandleFlagBuilderTestCase(unittest.TestCase):
     def test_get_flag(self):
         # Array
         df = pd.DataFrame(np.array([[1, 10, 3, 5, 10], [5, 9, 2, 8, 20], [6, 5, 15, 1, 30], [1, 10, 3, 5, 10], [1, 10, 3, 5, 10]]),
@@ -19,13 +18,13 @@ class FirstInCandleFlagBuilderTestCase(unittest.TestCase):
             [True, False, True, False, False], index=df.index)
 
         # Acts
-        asserted_sr = FirstInCandleFlagBuilder.get_flg_col(df.index, comp_func)
+        asserted_sr = get_first_in_candle_flag(df.index, comp_func)
 
         # Assert
 
         self.assertTrue(expected_sr.equals(asserted_sr))
         
-class LastInCandleFlagBuilderTestCase(unittest.TestCase):
+class GetLastInCandleFlagBuilderTestCase(unittest.TestCase):
     def test_get_flag(self):
         # Array
         df = pd.DataFrame(np.array([[1, 10, 3, 5, 10], [5, 9, 2, 8, 20], [6, 5, 15, 1, 30], [1, 10, 3, 5, 10], [1, 10, 3, 5, 10]]),
@@ -36,13 +35,13 @@ class LastInCandleFlagBuilderTestCase(unittest.TestCase):
             [ False,True, False, False, True], index=df.index)
 
         # Acts
-        asserted_sr = LastInCandleFlagBuilder.get_flg_col(df.index, comp_func)
+        asserted_sr = get_last_in_candle_flag(df.index, comp_func)
 
         # Assert
 
         self.assertTrue(expected_sr.equals(asserted_sr))
 
-class NewOpenColBuilderTestCase(unittest.TestCase):
+class GetNewOpenColBuilderTestCase(unittest.TestCase):
     def test_get_flag(self):
         # Array
         df = pd.DataFrame(np.array([[1, 10, 3, 5, 10], [5, 9, 2, 8, 20], [6, 5, 15, 1, 30], [1, 10, 3, 5, 10], [1, 10, 3, 5, 10]]),
@@ -53,13 +52,13 @@ class NewOpenColBuilderTestCase(unittest.TestCase):
         expected_sr = pd.Series([1, 1, 6, 6, 6], index=df.index)
 
         # Acts
-        asserted_sr = NewOpenColBuilder.get_new_col(df["O"], flag_sr)
+        asserted_sr = get_new_open_col(df["O"], flag_sr)
 
         # Assert
 
         self.assertTrue(expected_sr.equals(asserted_sr))
 
-class NewCloseColBuilderTestCase(unittest.TestCase):
+class GetNewCloseColBuilderTestCase(unittest.TestCase):
     def test_get_flag(self):
         # Array
         df = pd.DataFrame(np.array([[1, 10, 3, 5, 10], [5, 9, 2, 8, 20], [6, 5, 15, 1, 30], [1, 10, 3, 5, 10], [1, 10, 3, 5, 10]]),
@@ -70,13 +69,13 @@ class NewCloseColBuilderTestCase(unittest.TestCase):
         expected_sr = pd.Series([5, 8, 1, 5, 5], index=df.index)
 
         # Acts
-        asserted_sr = NewCloseColBuilder.get_new_col(df["C"], flag_sr)
+        asserted_sr = get_new_close_col(df["C"], flag_sr)
 
         # Assert
 
         self.assertTrue(expected_sr.equals(asserted_sr))
         
-class NewLowColBuilderTestCase(unittest.TestCase):
+class GetNewLowColBuilderTestCase(unittest.TestCase):
     def test_get_flag(self):
         # Array
         df = pd.DataFrame(np.array([[1, 10, 3, 5, 10], [5, 9, 2, 8, 20], [6, 5, 15, 1, 30], [1, 10, 3, 5, 10], [1, 10, 10, 5, 10]]),
@@ -87,13 +86,13 @@ class NewLowColBuilderTestCase(unittest.TestCase):
         expected_sr = pd.Series([3, 2, 15, 3, 3], index=df.index)
 
         # Acts
-        asserted_sr = NewLowColBuilder.get_new_col(df["L"], flag_sr)
+        asserted_sr = get_new_low_col(df["L"], flag_sr)
 
         # Assert
 
         self.assertTrue(expected_sr.equals(asserted_sr))
         
-class NewHighColBuilderTestCase(unittest.TestCase):
+class GetNewHighColBuilderTestCase(unittest.TestCase):
     def test_get_flag(self):
         # Array
         df = pd.DataFrame(np.array([[1, 10, 3, 5, 10], [5, 9, 2, 8, 20], [6, 5, 15, 1, 30], [1, 10, 3, 5, 10], [1, 7, 10, 5, 10]]),
@@ -104,13 +103,13 @@ class NewHighColBuilderTestCase(unittest.TestCase):
         expected_sr = pd.Series([10, 10, 5, 10, 10], index=df.index)
 
         # Acts
-        asserted_sr = NewHighColBuilder.get_new_col(df["H"], flag_sr)
+        asserted_sr = get_new_high_col(df["H"], flag_sr)
 
         # Assert
 
         self.assertTrue(expected_sr.equals(asserted_sr))
         
-class NewVolumeColBuilderTestCase(unittest.TestCase):
+class GetNewVolumeColBuilderTestCase(unittest.TestCase):
     def test_get_flag(self):
         # Array
         df = pd.DataFrame(np.array([[1, 10, 3, 5, 10], [5, 9, 2, 8, 20], [6, 5, 15, 1, 20], [1, 10, 3, 5, 10], [1, 7, 10, 5, 10]]),
@@ -121,7 +120,7 @@ class NewVolumeColBuilderTestCase(unittest.TestCase):
         expected_sr = pd.Series([10, 30, 20, 30, 40], index=df.index)
 
         # Acts
-        asserted_sr = NewVolumeColBuilder.get_new_col(df["V"], flag_sr)
+        asserted_sr = get_new_volume_col(df["V"], flag_sr)
 
         # Assert
 

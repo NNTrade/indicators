@@ -23,7 +23,7 @@ lib = "traiding.indicator"
 
 setuptools.setup(
     name=lib,
-    version="1.2.0",
+    version="1.3.0",
     author="InsonusK",
     author_email="insonus.k@gmail.com",
     description="Framework with indicators for trading robots",

@@ -3,7 +3,7 @@ import logging
 from typing import Dict, List
 import pandas as pd
 from quote_source.client.TimeFrame import TimeFrame
-from .builder import FirstInCandleFlagBuilder, NewOpenColBuilder, NewLowColBuilder, NewCloseColBuilder, NewHighColBuilder, NewVolumeColBuilder
+from .builder import get_first_in_candle_flag, get_new_open_col,get_new_close_col,get_new_high_col,get_new_low_col,get_new_volume_col
 from .dt_compare import compare_strategy
 from .open_candle_dt import getOpenDTForSR
 from .checks import check_tf_could_be_up, count_candle_in_up_candle
@@ -67,16 +67,16 @@ class Aggregator:
         Returns:
             pd.DataFrame: Результирующий DataFrame
         """
-        flg_sr = FirstInCandleFlagBuilder.get_flg_col(
+        flg_sr = get_first_in_candle_flag(
             df.index, self._comp_dt_str(target_tf))
-        new_open = NewOpenColBuilder.get_new_col(
+        new_open = get_new_open_col(
             df[self._col_map.Open], flg_sr)
-        new_high = NewHighColBuilder.get_new_col(
+        new_high = get_new_high_col(
             df[self._col_map.High], flg_sr)
-        new_low = NewLowColBuilder.get_new_col(df[self._col_map.Low], flg_sr)
-        new_close = NewCloseColBuilder.get_new_col(
+        new_low = get_new_low_col(df[self._col_map.Low], flg_sr)
+        new_close = get_new_close_col(
             df[self._col_map.Close], flg_sr)
-        new_volume = NewVolumeColBuilder.get_new_col(
+        new_volume = get_new_volume_col(
             df[self._col_map.Volume], flg_sr)
         ret_df = pd.DataFrame(
             [new_open, new_high, new_low, new_close, new_volume]).transpose()
