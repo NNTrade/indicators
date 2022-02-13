@@ -3,12 +3,12 @@ import unittest
 import pandas as pd
 from pandas import Timestamp as datetime
 import numpy as np
-from src.candle_up_time_frame.builder import FirstInCandleFlagBuilder, NewOpenColBuilder, NewCloseColBuilder,NewLowColBuilder,NewHighColBuilder, NewVolumeColBuilder
+from src.candle_up_time_frame.builder import FirstInCandleFlagBuilder, NewOpenColBuilder, NewCloseColBuilder,NewLowColBuilder,NewHighColBuilder, NewVolumeColBuilder, LastInCandleFlagBuilder
 from src.candle_up_time_frame.dt_compare import compare_strategy
 from quote_source.client.TimeFrame import TimeFrame
 
 
-class NewCandleFlagBuilderTestCase(unittest.TestCase):
+class FirstInCandleFlagBuilderTestCase(unittest.TestCase):
     def test_get_flag(self):
         # Array
         df = pd.DataFrame(np.array([[1, 10, 3, 5, 10], [5, 9, 2, 8, 20], [6, 5, 15, 1, 30], [1, 10, 3, 5, 10], [1, 10, 3, 5, 10]]),
@@ -24,7 +24,23 @@ class NewCandleFlagBuilderTestCase(unittest.TestCase):
         # Assert
 
         self.assertTrue(expected_sr.equals(asserted_sr))
+        
+class LastInCandleFlagBuilderTestCase(unittest.TestCase):
+    def test_get_flag(self):
+        # Array
+        df = pd.DataFrame(np.array([[1, 10, 3, 5, 10], [5, 9, 2, 8, 20], [6, 5, 15, 1, 30], [1, 10, 3, 5, 10], [1, 10, 3, 5, 10]]),
+                          columns=["O", "H", "L", "C", "V"],
+                          index=np.array([datetime(2000, 1, 1, 1), datetime(2000, 1, 1, 3), datetime(2000, 1, 2, 6), datetime(2000, 1, 2, 8), datetime(2000, 1, 2, 23)]))
+        comp_func = compare_strategy(TimeFrame.D)
+        expected_sr = pd.Series(
+            [ False,True, False, False, True], index=df.index)
 
+        # Acts
+        asserted_sr = LastInCandleFlagBuilder.get_flg_col(df.index, comp_func)
+
+        # Assert
+
+        self.assertTrue(expected_sr.equals(asserted_sr))
 
 class NewOpenColBuilderTestCase(unittest.TestCase):
     def test_get_flag(self):
