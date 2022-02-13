@@ -3,7 +3,7 @@ import logging
 from typing import Dict, List
 import pandas as pd
 from quote_source.client.TimeFrame import TimeFrame
-from .builder import NewCandleFlagBuilder, NewOpenColBuilder, NewLowColBuilder, NewCloseColBuilder, NewHighColBuilder, NewVolumeColBuilder
+from .builder import FirstInCandleFlagBuilder, NewOpenColBuilder, NewLowColBuilder, NewCloseColBuilder, NewHighColBuilder, NewVolumeColBuilder
 from .dt_compare import compare_strategy
 from .open_candle_dt import getOpenDTForSR
 from .checks import check_tf_could_be_up, count_candle_in_up_candle
@@ -67,7 +67,7 @@ class Aggregator:
         Returns:
             pd.DataFrame: Результирующий DataFrame
         """
-        flg_sr = NewCandleFlagBuilder.get_flg_col(
+        flg_sr = FirstInCandleFlagBuilder.get_flg_col(
             df.index, self._comp_dt_str(target_tf))
         new_open = NewOpenColBuilder.get_new_col(
             df[self._col_map.Open], flg_sr)

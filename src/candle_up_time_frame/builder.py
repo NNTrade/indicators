@@ -1,7 +1,7 @@
 from typing import List
 import pandas as pd
 
-class NewCandleFlagBuilder:
+class FirstInCandleFlagBuilder:
     """
     Строитель колонки с флагом, что начинается новая свеча верхнего уровня
     """
@@ -31,9 +31,20 @@ class NewCandleFlagBuilder:
     
     @staticmethod
     def get_flg_col(dt_sr: List[pd.Timestamp], comp_func)->pd.Series:
-        worker = NewCandleFlagBuilder(comp_func)
+        worker = FirstInCandleFlagBuilder(comp_func)
         
         return pd.Series([worker.get_flag(idx) for idx in dt_sr],index=dt_sr,name=f"NewCandleFlag")
+    
+class LastInCandleFlagBuilder:
+    """
+    Строитель колонки с флагом, что начинается новая свеча верхнего уровня
+    """
+    def __init__(self):
+        pass
+    
+    @staticmethod
+    def get_flg_col(dt_sr: List[pd.Timestamp], comp_func)->pd.Series:
+        return FirstInCandleFlagBuilder.get_flg_col(dt_sr, comp_func).shift(periods=-1, fill_value=True)
 
 class NewOpenColBuilder:
     """

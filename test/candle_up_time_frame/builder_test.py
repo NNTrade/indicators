@@ -3,7 +3,7 @@ import unittest
 import pandas as pd
 from pandas import Timestamp as datetime
 import numpy as np
-from src.candle_up_time_frame.builder import NewCandleFlagBuilder, NewOpenColBuilder, NewCloseColBuilder,NewLowColBuilder,NewHighColBuilder, NewVolumeColBuilder
+from src.candle_up_time_frame.builder import FirstInCandleFlagBuilder, NewOpenColBuilder, NewCloseColBuilder,NewLowColBuilder,NewHighColBuilder, NewVolumeColBuilder
 from src.candle_up_time_frame.dt_compare import compare_strategy
 from quote_source.client.TimeFrame import TimeFrame
 
@@ -19,7 +19,7 @@ class NewCandleFlagBuilderTestCase(unittest.TestCase):
             [True, False, True, False, False], index=df.index)
 
         # Acts
-        asserted_sr = NewCandleFlagBuilder.get_flg_col(df.index, comp_func)
+        asserted_sr = FirstInCandleFlagBuilder.get_flg_col(df.index, comp_func)
 
         # Assert
 
