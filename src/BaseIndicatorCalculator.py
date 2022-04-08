@@ -4,11 +4,11 @@ import pandas as pd
 
 class BaseIndicatorCalculator(ABC):
   def __init__(self, config:Dict = {}) -> None:
-    self.__config = config
+    self._config = config
 
   @property
   def config(self) ->Dict:
-    return self.__config
+    return self._config
   
   @abstractmethod
   def calc_value(self,candle: pd.Series, state:Dict) -> Tuple[Dict[str,float], Dict]:
