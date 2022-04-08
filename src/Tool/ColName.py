@@ -1,0 +1,6 @@
+Close =  "C"
+Open = "O"
+High = "H"
+Low = "L"
+OpenCandleDT = "Odt"
+CloseCandleDT = "Cdt"
