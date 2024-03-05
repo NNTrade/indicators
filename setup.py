@@ -18,7 +18,7 @@ def get_requirements():
     return ret_requires
 
 lib = "NNTrade.indicators"
-
+packages = [lib] + [f"{lib}.{pkg}" for pkg in setuptools.find_packages(where="src")]
 setuptools.setup(
     name=lib,
     version="2.0.0",
@@ -27,7 +27,7 @@ setuptools.setup(
     description="Framework with indicators for trading robots",
     long_description=long_description,
     url="https://github.com/NNTrade/indicators",
-    packages=[f"{lib}.{pkg}" for pkg in setuptools.find_packages(where="src")],
+    packages=packages,
     package_dir={lib:'src'},
     install_requires=get_requirements(),
     classifiers=[
