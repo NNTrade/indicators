@@ -15,8 +15,6 @@ def get_requirements():
     ret_requires = []
     for req_txt in get_req_files("requirements.txt"):
         ret_requires.append(req_txt)
-    for req_txt in get_req_files("requirements_ssh.txt"):
-        ret_requires.append(req_txt)
     return ret_requires
 
 lib = "NNTrade.indicators"
