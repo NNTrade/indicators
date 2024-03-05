@@ -1,19 +1,21 @@
 import pandas as pd
-from .tool.naming import get_col_name, Indicators
 from .ma import SmaBuilder
+from .base_indicator import baseSingleSourceBuilder,Indicators
 
-class SmaGainBuilder(object):
+class SmaGainBuilder(baseSingleSourceBuilder):
     @staticmethod
     def BuildFor(value_sr: pd.Series, period:int, is_last:pd.Series=None ) -> pd.Series:
             return SmaGainBuilder(period).get_for(value_sr,is_last)
 
     def __init__(self, period):
         self.__period = period
-
-    def get_name_for(self, sr: pd.Series)->str:
-        return get_col_name(Indicators.SMAGain, [str(self.__period)], [sr.name])
-
-    def get_for(self, sr: pd.Series, is_last:pd.Series=None) -> pd.Series:
+        super().__init__([str(period)])
+    
+    @property
+    def get_indicator_id(self)->Indicators:
+        return Indicators.SMAGain
+    
+    def _get_for(self, sr: pd.Series, is_last:pd.Series=None, indicators_df:pd.DataFrame = None) -> pd.Series:
         """
         get Series with EMA by Values in Series
         sr - Series of Values
@@ -60,18 +62,20 @@ class SmaGainBuilder(object):
             return self.__ma_worker.calc(delta, is_last)
         
 
-class SmaLossBuilder(object):
+class SmaLossBuilder(baseSingleSourceBuilder):
     @staticmethod
     def BuildFor(value_sr: pd.Series, period:int, is_last:pd.Series=None ) -> pd.Series:
             return SmaLossBuilder(period).get_for(value_sr,is_last)
 
     def __init__(self, period):
         self.__period = period
-
-    def get_name_for(self, sr: pd.Series)->str:
-        return get_col_name(Indicators.SMALoss, [str(self.__period)], [sr.name])
-
-    def get_for(self, sr: pd.Series, is_last:pd.Series=None) -> pd.Series:
+        super().__init__([str(period)])
+    
+    @property
+    def get_indicator_id(self)->Indicators:
+        return Indicators.SMALoss
+    
+    def _get_for(self, sr: pd.Series, is_last:pd.Series=None, indicators_df:pd.DataFrame = None) -> pd.Series:
         """
         get Series with EMA by Values in Series
         sr - Series of Values

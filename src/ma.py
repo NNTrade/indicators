@@ -1,20 +1,22 @@
-from .tool.naming import Indicators, get_col_name
 import numpy as np
 import pandas as pd
+from .base_indicator import baseSingleSourceBuilder,Indicators
 
-class EmaBuilder(object):
+class EmaBuilder(baseSingleSourceBuilder):
     @staticmethod
     def BuildFor(value_sr: pd.Series, period:int, is_last:pd.Series=None ) -> pd.Series:
             return EmaBuilder(period).get_for(value_sr,is_last)
-
+    
+    
     def __init__(self, period):
         self.__a__ = 2 / (period + 1)
-        self.__period = period
-
-    def get_name_for(self, sr: pd.Series)->str:
-        return get_col_name(Indicators.EMA, [str(self.__period)], [sr.name])
+        super().__init__([str(period)])
     
-    def get_for(self, sr: pd.Series, is_last:pd.Series=None) -> pd.Series:
+    @property
+    def get_indicator_id(self)->Indicators:
+        return Indicators.EMA
+    
+    def _get_for(self, sr: pd.Series, is_last:pd.Series=None, indicators_df:pd.DataFrame = None) -> pd.Series:
         """
         get Series with EMA by Values in Series
         sr - Series of Values
@@ -49,18 +51,20 @@ class EmaBuilder(object):
 
 
 
-class SmaBuilder(object):
+class SmaBuilder(baseSingleSourceBuilder):
     @staticmethod
     def BuildFor(value_sr: pd.Series, period:int, is_last:pd.Series=None ) -> pd.Series:
             return SmaBuilder(period).get_for(value_sr,is_last)
 
     def __init__(self, period):
         self.__period = period
+        super().__init__([str(period)])
+    
+    @property
+    def get_indicator_id(self)->Indicators:
+        return Indicators.SMA
 
-    def get_name_for(self, sr: pd.Series)->str:
-        return get_col_name(Indicators.SMA, [str(self.__period)], [sr.name])
-
-    def get_for(self, sr: pd.Series, is_last:pd.Series=None) -> pd.Series:
+    def _get_for(self, sr: pd.Series, is_last:pd.Series=None, indicators_df:pd.DataFrame = None) -> pd.Series:
         """
         get Series with EMA by Values in Series
         sr - Series of Values
