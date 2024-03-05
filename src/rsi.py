@@ -1,5 +1,5 @@
 import pandas as pd
-from .Tool.naming import get_col_name, Indicators
+from .tool.naming import get_col_name, Indicators
 from .gain_loss import SmaGainBuilder, SmaLossBuilder
 
 class RSBuilder:

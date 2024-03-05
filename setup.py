@@ -19,11 +19,11 @@ def get_requirements():
         ret_requires.append(req_txt)
     return ret_requires
 
-lib = "traiding.indicator"
+lib = "NNTrade.indicator"
 
 setuptools.setup(
     name=lib,
-    version="1.3.0",
+    version="2.0.0",
     author="InsonusK",
     author_email="insonus.k@gmail.com",
     description="Framework with indicators for trading robots",

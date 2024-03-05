@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
 import numpy as np
-from src.ma.ema_builder import EmaBuilder as ema
+from src.ma import EmaBuilder as ema
 
 class EmaBuilderTestCase(unittest.TestCase):
 
