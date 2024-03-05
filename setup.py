@@ -21,7 +21,7 @@ lib = "NNTrade.indicators"
 packages = [lib] + [f"{lib}.{pkg}" for pkg in setuptools.find_packages(where="src")]
 setuptools.setup(
     name=lib,
-    version="2.0.0",
+    version="2.0.1",
     author="InsonusK",
     author_email="insonus.k@gmail.com",
     description="Framework with indicators for trading robots",
