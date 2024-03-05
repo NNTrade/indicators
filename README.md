@@ -14,3 +14,8 @@ D|D - dependency columns splitted by '|'
 Example:
 - `EMA(7)[CLOSE]`
 - `BB_H(120|2)[HIGH|LOW]` + `BB_L(120|2)[HIGH|LOW]`
+
+# Install
+`
+NNTrade.indicators @ git+https://git@github.com/NNTrade/indicators.git#egg=NNTrade.indicators
+`
