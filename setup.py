@@ -19,7 +19,7 @@ def get_requirements():
         ret_requires.append(req_txt)
     return ret_requires
 
-lib = "NNTrade.indicator"
+lib = "NNTrade.indicators"
 
 setuptools.setup(
     name=lib,
